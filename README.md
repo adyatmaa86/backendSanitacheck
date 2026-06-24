@@ -4,10 +4,10 @@
 SanitaCheck adalah sistem monitoring kebersihan dan sanitasi fasilitas umum (seperti toilet, kantin, ruang tunggu, tempat cuci tangan, dan ruang kelas) di lingkungan fasilitas umum atau kesehatan. Sistem ini mencatat inspeksi sanitasi berkala, menganalisis status kelayakan (bersih, perlu dibersihkan, buruk), dan memberikan rekomendasi preventif pencegahan risiko kesehatan bagi masyarakat.
 
 ## Anggota Kelompok
-1. Ceo Adyatma86 - NIM UAS 001 - Fullstack Developer & Team Leader
-2. Anggota 2 - NIM UAS 002 - Frontend Designer
-3. Anggota 3 - NIM UAS 003 - Backend Engineer & QA
-4. Anggota 4 - NIM UAS 004 - Technical Writer & Deployment Specialist
+1. Achmad Helmy Aziz Adyatma - NIM 24102001 - Fullstack Developer & Team Leader
+2. Melany Kresna Putri - NIM 24102015 - System Analyst
+3. Ahmad Dio Raihan Fahrizal - NIM 24102025 - UI/UX Designer
+4. Devita Dwi Putri - NIM UAS 24102024 - UI/UX Designer
 
 ## Fitur Aplikasi
 - **Login Admin/Petugas:** Autentikasi aman untuk membedakan admin (pengelola fasilitas) dan petugas lapangan (pencatat inspeksi).
@@ -50,14 +50,14 @@ SanitaCheck adalah sistem monitoring kebersihan dan sanitasi fasilitas umum (sep
 ## Akun Demo
 - **Admin:**
   - Email: `admin@sanitacheck.com`
-  - Password: `password123`
+  - Password: `12345678`
 - **Petugas:**
   - Email: `petugas@sanitacheck.com`
-  - Password: `password123`
+  - Password: `12345678`
 
 ## Link Deploy
-- **Frontend:** http://localhost/phpnative
-- **Backend/Admin:** http://127.0.0.1:8000
+- **Frontend:** https://sagitacheck.dyt.my.id
+- **Backend/Admin:** https://sagitapoy.dyt.my.id/api
 
 ## Endpoint API
 | Method | Endpoint | Keterangan |
