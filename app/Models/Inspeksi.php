@@ -20,11 +20,15 @@ class Inspeksi extends Model
         'ketersediaan_sabun',
         'bau_tidak_sedap',
         'catatan',
+        'foto',
+        'foto_selesai',
         'status_tindak_lanjut',
+        'is_completed',
     ];
 
     protected $casts = [
         'tanggal_inspeksi' => 'datetime',
+        'is_completed' => 'boolean',
     ];
 
     public function facility()

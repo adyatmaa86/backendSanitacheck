@@ -17,19 +17,19 @@
                                 {{ strtoupper(substr($a->name, 0, 1)) }}
                             </div>
                             <div>
-                                <div style="font-size:0.84rem;font-weight:700;color:var(--adm-text);">{{ $a->name }}</div>
-                                <div style="font-size:0.7rem;color:var(--adm-muted);">Role: Admin</div>
+                                <div class="fs-8 fw-bold text-adm-text">{{ $a->name }}</div>
+                                <div class="fs-13 text-adm-muted">Role: Admin</div>
                             </div>
                         </div>
                     </td>
                     <td>
-                        <div style="font-size:0.82rem;font-weight:600;color:var(--adm-text); display:flex; align-items:center; gap:5px;">
-                            <span class="material-symbols-outlined" style="font-size:0.95rem; color:var(--adm-muted);">mail</span>
+                        <div class="fs-9 fw-semibold text-adm-text d-flex align-items-center gap-1">
+                            <span class="material-symbols-outlined icon-sm text-adm-muted">mail</span>
                             {{ $a->email }}
                         </div>
                     </td>
-                    <td style="font-size:0.78rem;color:var(--adm-muted);white-space:nowrap;">
-                        <span class="material-symbols-outlined align-middle me-1" style="font-size:0.85rem;">calendar_month</span>
+                    <td class="fs-10 text-adm-muted text-nowrap">
+                        <span class="material-symbols-outlined align-middle me-1 fs-85"> calendar_month</span>
                         {{ $a->created_at->format('d M Y') }}
                     </td>
                     <td>
@@ -44,8 +44,8 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="4" style="padding:48px;text-align:center;color:var(--adm-muted);font-size:0.84rem;">
-                        <span class="material-symbols-outlined d-block mb-2" style="font-size:2rem;">admin_panel_settings</span>
+                    <td colspan="4" class="empty-td">
+                        <span class="material-symbols-outlined d-block mb-2 icon-3xl">admin_panel_settings</span>
                         Belum ada admin terdaftar.
                     </td>
                 </tr>
@@ -53,7 +53,7 @@
             @if(count($admins) > 0)
                 @for ($i = count($admins); $i < 5; $i++)
                     <tr class="empty-row">
-                        <td colspan="4" style="height: 69px; border: none;">&nbsp;</td>
+                        <td colspan="4" class="h-empty border-0">&nbsp;</td>
                     </tr>
                 @endfor
             @endif
@@ -62,6 +62,16 @@
 </div>
 
 <div class="data-card-footer">
-    <span class="page-info">Menampilkan {{ $admins->firstItem() ?? 0 }}–{{ $admins->lastItem() ?? 0 }} dari {{ $admins->total() }} admin</span>
-    <div class="ajax-pagination">{{ $admins->appends(request()->query())->links('pagination::bootstrap-5') }}</div>
+    <span class="page-info">
+        @if ($admins instanceof \Illuminate\Pagination\AbstractPaginator)
+            Menampilkan {{ $admins->firstItem() ?? 0 }}–{{ $admins->lastItem() ?? 0 }} dari {{ $admins->total() }} admin
+        @else
+            Total {{ count($admins) }} admin
+        @endif
+    </span>
+    <div class="ajax-pagination">
+        @if ($admins instanceof \Illuminate\Pagination\AbstractPaginator)
+            {{ $admins->onEachSide(1)->appends(request()->query())->links('pagination::bootstrap-5') }}
+        @endif
+    </div>
 </div>

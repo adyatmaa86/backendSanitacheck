@@ -7,11 +7,11 @@
 @section('content')
 <!-- Overview Cards -->
 <div class="row g-3 mb-4">
-    <div class="col-6 col-md-4">
+    <div class="col-12 col-md-4">
         <div class="stat-card">
             <div class="d-flex justify-content-between align-items-start">
-                <div class="stat-icon" style="background:#fef2f2;">
-                    <span class="material-symbols-outlined" style="color:#dc2626;">admin_panel_settings</span>
+                <div class="stat-icon bg-red-50">
+                    <span class="material-symbols-outlined text-red-darker">admin_panel_settings</span>
                 </div>
             </div>
             <div>
@@ -32,9 +32,8 @@
             </div>
             @if(Auth::user()->role === 'admin')
                 <div>
-                    <a href="{{ route('settings.add-admin') }}" class="btn btn-primary btn-sm d-flex align-items-center gap-1 px-2 px-sm-3"
-                        style="font-size:0.8rem;font-weight:700;border-radius:8px;height:36px;text-decoration:none;">
-                        <span class="material-symbols-outlined" style="font-size:0.95rem;">admin_panel_settings</span> <span class="d-none d-sm-inline">Tambah Admin</span>
+                    <a href="{{ route('settings.add-admin') }}" class="btn btn-primary btn-sm d-flex align-items-center gap-1 px-2 px-sm-3 fs-9 fw-bold rounded-8 text-decoration-none btn-h-36">
+                        <span class="material-symbols-outlined icon-sm">admin_panel_settings</span> <span class="d-none d-sm-inline">Tambah Admin</span>
                     </a>
                 </div>
             @endif

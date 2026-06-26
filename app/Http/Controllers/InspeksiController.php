@@ -20,10 +20,13 @@ class InspeksiController extends Controller
             abort(403, 'Admin tidak memiliki akses ke form inspeksi.');
         }
 
-        $query = Fasilitas::where('status_aktif', true);
-        if (Auth::user()->role !== 'admin') {
-            $query->where('penanggung_jawab', Auth::id());
-        }
+        $query = Fasilitas::where('status_aktif', true)
+            ->where(function ($q) {
+                $q->where('penanggung_jawab', Auth::id())
+                  ->orWhereHas('petugasTambahan', function ($q2) {
+                      $q2->where('user_id', Auth::id());
+                  });
+            });
         $facilities = $query->get();
         return view('inspections.index', compact('facilities'));
     }
@@ -32,17 +35,19 @@ class InspeksiController extends Controller
     {
         $facilitiesQuery = Fasilitas::where('status_aktif', true);
         if (Auth::user()->role !== 'admin') {
-            $facilitiesQuery->where('penanggung_jawab', Auth::id());
+            $facilitiesQuery->where(function ($q) {
+                $q->where('penanggung_jawab', Auth::id())
+                  ->orWhereHas('petugasTambahan', function ($q2) {
+                      $q2->where('user_id', Auth::id());
+                  });
+            });
         }
         $facilities = $facilitiesQuery->get();
 
         $query = Inspeksi::with(['facility', 'officer']);
 
         if (Auth::user()->role !== 'admin') {
-            // Petugas hanya bisa melihat riwayat inspeksi dari fasilitas miliknya
-            $query->whereHas('facility', function($q) {
-                $q->where('penanggung_jawab', Auth::id());
-            });
+            $query->where('petugas_id', Auth::id());
         }
 
         // Filters
@@ -86,26 +91,46 @@ class InspeksiController extends Controller
         ]);
 
         $facility = Fasilitas::findOrFail($request->fasilitas_id);
-        if ($facility->penanggung_jawab !== Auth::id()) {
+        $isAuthorized = $facility->penanggung_jawab === Auth::id()
+            || $facility->petugasTambahan()->where('user_id', Auth::id())->exists();
+        if (!$isAuthorized) {
             abort(403, 'Anda tidak bertanggung jawab atas fasilitas ini.');
         }
 
-        if ($request->hasFile('foto_after')) {
-            $facility = Fasilitas::findOrFail($request->fasilitas_id);
+        $isCompleted = $request->status_tindak_lanjut === 'aman';
+        $fotoPath = null;
 
+        if ($request->hasFile('foto_after')) {
             if ($facility->foto_before) {
-                Storage::disk('public')->delete($facility->foto_before);
+                $isUsed = Inspeksi::where('foto', $facility->foto_before)
+                    ->orWhere('foto_selesai', $facility->foto_before)
+                    ->exists();
+                if (!$isUsed) {
+                    Storage::disk('public')->delete($facility->foto_before);
+                }
             }
             if ($facility->foto_after) {
-                Storage::disk('public')->delete($facility->foto_after);
+                $isUsed = Inspeksi::where('foto', $facility->foto_after)
+                    ->orWhere('foto_selesai', $facility->foto_after)
+                    ->exists();
+                if (!$isUsed) {
+                    Storage::disk('public')->delete($facility->foto_after);
+                }
             }
 
-            $fotoAfterPath = $request->file('foto_after')->store('facilities', 'public');
+            $fotoPath = $request->file('foto_after')->store('facilities', 'public');
 
-            $facility->update([
-                'foto_before' => null,
-                'foto_after' => $fotoAfterPath,
-            ]);
+            if ($isCompleted) {
+                $facility->update([
+                    'foto_before' => null,
+                    'foto_after' => $fotoPath,
+                ]);
+            } else {
+                $facility->update([
+                    'foto_before' => $fotoPath,
+                    'foto_after' => null,
+                ]);
+            }
         }
 
         $inspeksi = Inspeksi::create([
@@ -117,8 +142,14 @@ class InspeksiController extends Controller
             'ketersediaan_sabun' => $request->ketersediaan_sabun,
             'bau_tidak_sedap' => $request->bau_tidak_sedap,
             'catatan' => $request->catatan,
+            'foto' => $fotoPath,
             'status_tindak_lanjut' => $request->status_tindak_lanjut,
+            'is_completed' => $isCompleted,
         ]);
+
+        if (!$isCompleted) {
+            Auth::user()->update(['status_pengerjaan' => 'aktif']);
+        }
 
         $inspeksi->load(['facility', 'officer']);
         $admins = User::where('role', 'admin')->get();
@@ -134,8 +165,106 @@ class InspeksiController extends Controller
         }
 
         $inspection = Inspeksi::findOrFail($id);
+        $facility = $inspection->facility;
+        $petugasId = $inspection->petugas_id;
+        $wasActive = !$inspection->is_completed;
+
+        $oldFoto = $inspection->foto;
+        $oldFotoSelesai = $inspection->foto_selesai;
+
+        if ($facility) {
+            $latest = Inspeksi::where('fasilitas_id', $facility->id)
+                ->where('id', '!=', $inspection->id)
+                ->orderBy('tanggal_inspeksi', 'desc')
+                ->first();
+            if ($latest) {
+                if ($latest->is_completed) {
+                    if ($latest->foto_selesai) {
+                        $facility->update([
+                            'foto_before' => $latest->foto,
+                            'foto_after' => $latest->foto_selesai,
+                        ]);
+                    } else {
+                        $facility->update([
+                            'foto_before' => null,
+                            'foto_after' => $latest->foto,
+                        ]);
+                    }
+                } else {
+                    $facility->update([
+                        'foto_before' => $latest->foto,
+                        'foto_after' => null,
+                    ]);
+                }
+            } else {
+                $facility->update([
+                    'foto_before' => null,
+                    'foto_after' => null,
+                ]);
+            }
+        }
+
         $inspection->delete();
 
+        if ($wasActive && $petugasId) {
+            $hasActiveTasks = Inspeksi::where('petugas_id', $petugasId)
+                ->where('is_completed', false)
+                ->exists();
+            if (!$hasActiveTasks) {
+                User::where('id', $petugasId)->update(['status_pengerjaan' => 'ready']);
+            }
+        }
+
+        if ($oldFoto) {
+            $isUsed = Inspeksi::where('foto', $oldFoto)
+                ->orWhere('foto_selesai', $oldFoto)
+                ->exists();
+            if (!$isUsed) {
+                Storage::disk('public')->delete($oldFoto);
+            }
+        }
+        if ($oldFotoSelesai) {
+            $isUsed = Inspeksi::where('foto', $oldFotoSelesai)
+                ->orWhere('foto_selesai', $oldFotoSelesai)
+                ->exists();
+            if (!$isUsed) {
+                Storage::disk('public')->delete($oldFotoSelesai);
+            }
+        }
+
         return redirect()->route('inspections.history')->with('success', 'Inspeksi berhasil dihapus.');
+    }
+
+    public function destroyAll()
+    {
+        if (Auth::user()->role !== 'admin') {
+            return abort(403, 'Unauthorized action.');
+        }
+
+        $inspections = Inspeksi::all();
+        foreach ($inspections as $ins) {
+            if ($ins->foto) {
+                Storage::disk('public')->delete($ins->foto);
+            }
+            if ($ins->foto_selesai) {
+                Storage::disk('public')->delete($ins->foto_selesai);
+            }
+        }
+
+        // Delete all remaining files inside facilities directory (including facility's foto_before/foto_after)
+        Storage::disk('public')->deleteDirectory('facilities');
+
+        Inspeksi::query()->delete();
+
+        // Reset all officers to ready
+        User::where('role', 'petugas')->update(['status_pengerjaan' => 'ready']);
+
+        // Reset all facilities' photos
+        Fasilitas::query()->update([
+            'foto_before' => null,
+            'foto_after' => null,
+        ]);
+
+        return redirect()->route('inspections.history')->with('success', 'Seluruh riwayat inspeksi berhasil dihapus.');
     }
 }

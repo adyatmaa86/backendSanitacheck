@@ -18,11 +18,13 @@ class FasilitasController extends Controller
         $jenis = $request->input('jenis_fasilitas');
         $query = Fasilitas::query()->with('petugas', 'latestInspection');
 
-        // Jika petugas login, filter fasilitas hanya miliknya (berdasarkan email/username petugas yang login)
-        // User login menggunakan Auth::user(). Mari kita gunakan id petugas atau name/email, request berkata "dengan username yang dimiliki oleh petugas yang login"
-        // di laravel, user memiliki email (yang sering dianggap username login) atau id. Kita filter berdasarkan petugas_id matching Auth::id() jika role bukan admin.
         if (Auth::user()->role !== 'admin') {
-            $query->where('penanggung_jawab', Auth::id());
+            $query->where(function ($q) {
+                $q->where('penanggung_jawab', Auth::id())
+                  ->orWhereHas('petugasTambahan', function ($q2) {
+                      $q2->where('user_id', Auth::id());
+                  });
+            });
         }
 
         if ($search) {
@@ -33,12 +35,16 @@ class FasilitasController extends Controller
             $query->where('jenis_fasilitas', $jenis);
         }
 
-        $facilities = $query->orderBy('nama_fasilitas', 'desc')->paginate(5);
+        $facilities = $query->orderBy('nama_fasilitas', 'asc')->paginate(5);
 
-        // Calculate metrics for summary cards
         $metricsQuery = Fasilitas::query();
         if (Auth::user()->role !== 'admin') {
-            $metricsQuery->where('penanggung_jawab', Auth::id());
+            $metricsQuery->where(function ($q) {
+                $q->where('penanggung_jawab', Auth::id())
+                  ->orWhereHas('petugasTambahan', function ($q2) {
+                      $q2->where('user_id', Auth::id());
+                  });
+            });
         }
         $allFacilities = $metricsQuery->with('latestInspection')->get();
         $totalFacilities = $allFacilities->count();
@@ -58,7 +64,20 @@ class FasilitasController extends Controller
             }
         }
 
-        $listJenis = \App\Models\JenisFasilitas::all();
+        if (Auth::user()->role === 'admin') {
+            $listJenis = \App\Models\JenisFasilitas::all();
+        } else {
+            $ownedSlugs = Fasilitas::where(function ($q) {
+                    $q->where('penanggung_jawab', Auth::id())
+                      ->orWhereHas('petugasTambahan', function ($q2) {
+                          $q2->where('user_id', Auth::id());
+                      });
+                })
+                ->whereNotNull('jenis_fasilitas')
+                ->distinct()
+                ->pluck('jenis_fasilitas');
+            $listJenis = \App\Models\JenisFasilitas::whereIn('slug', $ownedSlugs)->get();
+        }
         $listPetugas = User::where('role', 'petugas')->get();
 
         if ($request->ajax()) {
@@ -70,6 +89,7 @@ class FasilitasController extends Controller
             'search',
             'jenis',
             'totalFacilities',
+            'compliantCount',
             'criticalCount',
             'pendingCount',
             'listJenis',
@@ -88,7 +108,9 @@ class FasilitasController extends Controller
             'jenis_fasilitas' => 'required|string|max:255',
             'lokasi' => 'required|string|max:255',
             'petugas_id' => 'required|exists:users,id',
-            'foto_before' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'petugas_tambahan_ids' => 'nullable|array',
+            'petugas_tambahan_ids.*' => 'exists:users,id',
+            'foto_before' => 'required|image|mimes:jpeg,png,jpg|max:2048',
             'status_aktif' => 'sometimes|boolean',
         ]);
 
@@ -106,7 +128,17 @@ class FasilitasController extends Controller
             'foto_before' => $fotoBeforePath,
         ]);
 
-        $officers = User::where('role', 'petugas')->get();
+        if ($request->has('_clear_tambahan')) {
+            $facility->petugasTambahan()->sync([]);
+        } elseif ($request->has('petugas_tambahan_ids')) {
+            $facility->petugasTambahan()->sync($request->petugas_tambahan_ids);
+        }
+
+        $tambahanIds = $request->has('_clear_tambahan') ? [] : ($request->petugas_tambahan_ids ?? []);
+        $allOfficerIds = collect([$request->petugas_id])
+            ->merge($tambahanIds)
+            ->unique();
+        $officers = User::whereIn('id', $allOfficerIds)->get();
         Notification::send($officers, new FacilityAlertNotification($facility, 'ditambahkan'));
 
         return redirect()->route('facilities.index')->with('success', 'Fasilitas berhasil ditambahkan.');
@@ -125,6 +157,8 @@ class FasilitasController extends Controller
             'jenis_fasilitas' => 'required|string|max:255',
             'lokasi' => 'required|string|max:255',
             'petugas_id' => 'required|exists:users,id',
+            'petugas_tambahan_ids' => 'nullable|array',
+            'petugas_tambahan_ids.*' => 'exists:users,id',
             'foto_before' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'status_aktif' => 'sometimes|boolean',
         ]);
@@ -148,9 +182,50 @@ class FasilitasController extends Controller
             $data['foto_after'] = null;
         }
 
+        $oldPetugasId = $facility->penanggung_jawab;
+        $newPetugasId = (int)$request->petugas_id;
+        $oldTambahanIds = $facility->petugasTambahan->pluck('id')->toArray();
+
         $facility->update($data);
 
-        $officers = User::where('role', 'petugas')->get();
+        if ($request->has('_clear_tambahan')) {
+            $facility->petugasTambahan()->sync([]);
+            $newTambahanIds = [];
+        } elseif ($request->has('petugas_tambahan_ids')) {
+            $facility->petugasTambahan()->sync($request->petugas_tambahan_ids);
+            $newTambahanIds = array_map('intval', $request->petugas_tambahan_ids);
+        } else {
+            $newTambahanIds = [];
+        }
+
+        $removedPetugasIds = array_diff($oldTambahanIds, $newTambahanIds);
+        if ($oldPetugasId !== $newPetugasId) {
+            $removedPetugasIds[] = $oldPetugasId;
+            
+            $activeInspection = \App\Models\Inspeksi::where('fasilitas_id', $facility->id)
+                ->where('is_completed', false)
+                ->first();
+
+            if ($activeInspection) {
+                $activeInspection->update(['petugas_id' => $newPetugasId]);
+                User::where('id', $newPetugasId)->update(['status_pengerjaan' => 'aktif']);
+            }
+        }
+
+        foreach ($removedPetugasIds as $pId) {
+            $hasActive = \App\Models\Inspeksi::where('petugas_id', $pId)
+                ->where('is_completed', false)
+                ->exists();
+            if (!$hasActive) {
+                User::where('id', $pId)->update(['status_pengerjaan' => 'ready']);
+            }
+        }
+
+        $tambahanIds = $request->has('_clear_tambahan') ? [] : ($request->petugas_tambahan_ids ?? []);
+        $allOfficerIds = collect([$request->petugas_id])
+            ->merge($tambahanIds)
+            ->unique();
+        $officers = User::whereIn('id', $allOfficerIds)->get();
         Notification::send($officers, new FacilityAlertNotification($facility, 'diperbarui'));
 
         return redirect()->route('facilities.index')->with('success', 'Fasilitas berhasil diperbarui.');
@@ -163,7 +238,23 @@ class FasilitasController extends Controller
         }
 
         $facility = Fasilitas::findOrFail($id);
+
+        $activeInspections = \App\Models\Inspeksi::where('fasilitas_id', $facility->id)
+            ->where('is_completed', false)
+            ->get();
+
+        $officerIds = $activeInspections->pluck('petugas_id')->filter()->unique();
+
         $facility->delete();
+
+        foreach ($officerIds as $officerId) {
+            $hasActiveTasks = \App\Models\Inspeksi::where('petugas_id', $officerId)
+                ->where('is_completed', false)
+                ->exists();
+            if (!$hasActiveTasks) {
+                User::where('id', $officerId)->update(['status_pengerjaan' => 'ready']);
+            }
+        }
 
         return redirect()->route('facilities.index')->with('success', 'Fasilitas berhasil dihapus.');
     }

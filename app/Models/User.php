@@ -26,6 +26,7 @@ class User extends Authenticatable
         'password',
         'role',
         'phone_number',
+        'status_pengerjaan',
     ];
 
     /**
@@ -59,5 +60,18 @@ class User extends Authenticatable
     public function facilities()
     {
         return $this->hasMany(Fasilitas::class, 'penanggung_jawab');
+    }
+
+    public function facilitiesTambahan()
+    {
+        return $this->belongsToMany(Fasilitas::class, 'fasilitas_petugas', 'user_id', 'fasilitas_id');
+    }
+
+    public function allFacilities()
+    {
+        $utamaIds = $this->facilities()->pluck('fasilitas.id');
+        $tambahanIds = $this->facilitiesTambahan()->pluck('fasilitas.id');
+        $allIds = $utamaIds->merge($tambahanIds)->unique();
+        return Fasilitas::whereIn('id', $allIds);
     }
 }

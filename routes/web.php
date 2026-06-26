@@ -9,6 +9,7 @@ use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PetugasController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\TaskMonitoringController;
 
 
 // Auth Routes
@@ -40,6 +41,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/inspections', [InspeksiController::class, 'index'])->name('inspections.index');
     Route::get('/history', [InspeksiController::class, 'history'])->name('inspections.history');
     Route::post('/inspections', [InspeksiController::class, 'store'])->name('inspections.store');
+    Route::delete('/inspections/destroy-all', [InspeksiController::class, 'destroyAll'])->name('inspections.destroy-all');
     Route::delete('/inspections/{id}', [InspeksiController::class, 'destroy'])->name('inspections.destroy');
 
     // Notifications
@@ -63,5 +65,12 @@ Route::middleware(['auth'])->group(function () {
     // Admin List
     Route::get('/admin-list', [AdminController::class, 'index'])->name('admin.index');
     Route::delete('/admin-list/{id}', [AdminController::class, 'destroy'])->name('admin.destroy');
+
+    // Monitoring Tugas & Petugas
+    Route::get('/pantau-petugas', [TaskMonitoringController::class, 'pantauPetugas'])->name('admin.pantau-petugas');
+    Route::get('/tugas-saya', [TaskMonitoringController::class, 'tugasSaya'])->name('petugas.tugas-saya');
+    Route::post('/tugas-saya/complete/{id}', [TaskMonitoringController::class, 'completeTask'])->name('petugas.complete-task');
 });
+
+
 

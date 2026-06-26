@@ -8,8 +8,11 @@
 
 @php
     $totalPetugas = \App\Models\User::where('role', 'petugas')->count();
+    $pjIds = \App\Models\Fasilitas::whereNotNull('penanggung_jawab')->pluck('penanggung_jawab');
+    $tambahanIds = \DB::table('fasilitas_petugas')->pluck('user_id');
+    $allActiveIds = $pjIds->merge($tambahanIds)->unique();
     $activeWithFacilities = \App\Models\User::where('role', 'petugas')
-        ->whereIn('id', \App\Models\Fasilitas::pluck('penanggung_jawab'))
+        ->whereIn('id', $allActiveIds)
         ->count();
     $idlePetugas = $totalPetugas - $activeWithFacilities;
 @endphp
@@ -19,8 +22,8 @@
     <div class="col-6 col-md-4">
         <div class="stat-card">
             <div class="d-flex justify-content-between align-items-start">
-                <div class="stat-icon" style="background:#eff6ff;">
-                    <span class="material-symbols-outlined" style="color:#1a56db;">badge</span>
+                <div class="stat-icon bg-blue-50">
+                    <span class="material-symbols-outlined text-blue-primary">badge</span>
                 </div>
             </div>
             <div>
@@ -32,13 +35,13 @@
     <div class="col-6 col-md-4">
         <div class="stat-card">
             <div class="d-flex justify-content-between align-items-start">
-                <div class="stat-icon" style="background:#e8fdf0;">
-                    <span class="material-symbols-outlined" style="color:#10b981;">domain</span>
+                <div class="stat-icon bg-green-soft">
+                    <span class="material-symbols-outlined text-emerald">domain</span>
                 </div>
-                <span class="stat-badge" style="background:#d1fae5;color:#065f46;">AKTIF</span>
+                <span class="stat-badge bg-green-200 text-dark-green">AKTIF</span>
             </div>
             <div>
-                <div class="stat-value" style="color:#10b981;">{{ $activeWithFacilities }}</div>
+                <div class="stat-value text-emerald">{{ $activeWithFacilities }}</div>
                 <div class="stat-label">Mengelola Fasilitas</div>
             </div>
         </div>
@@ -46,13 +49,13 @@
     <div class="col-12 col-md-4">
         <div class="stat-card">
             <div class="d-flex justify-content-between align-items-start">
-                <div class="stat-icon" style="background:#fffbeb;">
-                    <span class="material-symbols-outlined" style="color:#f59e0b;">person_off</span>
+                <div class="stat-icon bg-amber-soft">
+                    <span class="material-symbols-outlined text-amber-500">person_off</span>
                 </div>
-                <span class="stat-badge" style="background:#fef3c7;color:#92400e;">STANDBY</span>
+                <span class="stat-badge bg-yellow-100 text-dark-amber">STANDBY</span>
             </div>
             <div>
-                <div class="stat-value" style="color:#f59e0b;">{{ $idlePetugas }}</div>
+                <div class="stat-value text-amber-500">{{ $idlePetugas }}</div>
                 <div class="stat-label">Petugas Standby</div>
             </div>
         </div>
@@ -71,9 +74,8 @@
             <!-- Add Petugas Shortcut for Admin -->
             @if(Auth::user()->role === 'admin')
                 <div>
-                    <a href="{{ route('settings.add-petugas') }}" class="btn btn-primary btn-sm d-flex align-items-center gap-1 px-2 px-sm-3"
-                        style="font-size:0.8rem;font-weight:700;border-radius:8px;height:36px;text-decoration:none;">
-                        <span class="material-symbols-outlined" style="font-size:0.95rem;">person_add</span> <span class="d-none d-sm-inline">Tambah Petugas</span>
+                    <a href="{{ route('settings.add-petugas') }}" class="btn btn-primary btn-sm d-flex align-items-center gap-1 px-2 px-sm-3 rounded-8 text-decoration-none fs-8rem fw-bold btn-h-36">
+                        <span class="material-symbols-outlined icon-sm">person_add</span> <span class="d-none d-sm-inline">Tambah Petugas</span>
                     </a>
                 </div>
             @endif

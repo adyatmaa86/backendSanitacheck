@@ -1,0 +1,645 @@
+/* =============================================
+   SanitaCheck Utility Classes
+   ============================================= */
+
+/* --- Font Sizes --- */
+.fs-7 { font-size: 0.9rem !important; }
+.fs-8 { font-size: 0.84rem !important; }
+.fs-9 { font-size: 0.82rem !important; }
+.fs-10 { font-size: 0.78rem !important; }
+.fs-11 { font-size: 0.75rem !important; }
+.fs-12 { font-size: 0.72rem !important; }
+.fs-13 { font-size: 0.7rem !important; }
+.fs-14 { font-size: 0.68rem !important; }
+.fs-15 { font-size: 0.65rem !important; }
+.fs-16 { font-size: 0.6rem !important; }
+
+/* --- Line Height --- */
+.lh-13 { line-height: 1.3 !important; }
+.lh-15 { line-height: 1.5 !important; }
+
+/* --- Colors (text) --- */
+.text-blue-primary { color: #1a56db !important; }
+.text-green-primary { color: #16a34a !important; }
+.text-yellow-primary { color: #ca8a04 !important; }
+.text-red-primary { color: #ef4444 !important; }
+.text-red-darker { color: #dc2626 !important; }
+.text-red-darkest { color: #991b1b !important; }
+.text-green-darker { color: #166534 !important; }
+.text-yellow-darker { color: #854d0e !important; }
+.text-yellow-600 { color: #d97706 !important; }
+.text-emerald-500 { color: #10b981 !important; }
+.text-adm-text { color: var(--adm-text) !important; }
+.text-adm-muted { color: var(--adm-muted) !important; }
+.text-slate-400 { color: #94a3b8 !important; }
+.text-slate-500 { color: #64748b !important; }
+.text-slate-700 { color: #0f172a !important; }
+.text-slate-900 { color: #0f172a !important; }
+
+/* --- Backgrounds --- */
+.bg-blue-50 { background: #eff6ff !important; }
+.bg-green-50 { background: #f0fdf4 !important; }
+.bg-yellow-50 { background: #fefce8 !important; }
+.bg-red-50 { background: #fef2f2 !important; }
+.bg-blue-100 { background: #bfdbfe !important; }
+.bg-green-100 { background: #dcfce7 !important; }
+.bg-yellow-100 { background: #fef9c3 !important; }
+.bg-red-100 { background: #fee2e2 !important; }
+
+/* --- Border Radius --- */
+.rounded-2 { border-radius: 0.125rem !important; }
+.rounded-6 { border-radius: 6px !important; }
+.rounded-7 { border-radius: 7px !important; }
+.rounded-8 { border-radius: 8px !important; }
+.rounded-9 { border-radius: 9px !important; }
+.rounded-10 { border-radius: 10px !important; }
+.rounded-12 { border-radius: 12px !important; }
+.rounded-16 { border-radius: 16px !important; }
+
+/* --- Padding --- */
+.pb-20 { padding-bottom: 20px !important; }
+
+/* --- White Space --- */
+.text-nowrap { white-space: nowrap !important; }
+
+/* --- Object Fit --- */
+.object-fit-cover { object-fit: cover !important; }
+
+/* --- Widths --- */
+.min-w-180 { min-width: 180px !important; }
+.min-w-200 { min-width: 200px !important; }
+.min-w-24 { min-width: 24px !important; }
+.w-140 { width: 140px !important; }
+.w-220 { width: 220px !important; }
+.w-340 { width: 340px !important; }
+.max-h-450 { max-height: 450px !important; }
+.overflow-y-auto { overflow-y: auto !important; }
+.h-empty { height: 69px !important; }
+
+/* --- Gap --- */
+.gap-1 { gap: 0.25rem !important; }
+.gap-2 { gap: 0.5rem !important; }
+.gap-3 { gap: 1rem !important; }
+.gap-4 { gap: 1.5rem !important; }
+
+/* --- Cursor --- */
+.cursor-pointer { cursor: pointer !important; }
+
+/* --- Icon sizes --- */
+.icon-sm { font-size: 0.95rem !important; }
+.icon-md { font-size: 1rem !important; }
+.icon-lg { font-size: 1.1rem !important; }
+.icon-xl { font-size: 1.2rem !important; }
+.icon-2xl { font-size: 2rem !important; }
+.icon-3xl { font-size: 3rem !important; }
+
+/* --- Transitions --- */
+.transition-bg { transition: background 0.2s !important; }
+
+/* --- Scale --- */
+.scale-95 { transform: scale(0.95) !important; }
+
+/* --- Borders --- */
+.border-adm { border: 1px solid var(--adm-border) !important; }
+.border-adm-important { border: 1px solid var(--adm-border) !important; }
+
+/* --- Dropdown item --- */
+.dropdown-item-sm {
+    font-size: 0.82rem !important;
+    padding: 6px 12px !important;
+}
+
+/* --- Empty state --- */
+.empty-state {
+    padding: 40px;
+    text-align: center;
+    color: #94a3b8;
+    font-size: 0.84rem;
+}
+.empty-state .empty-icon {
+    font-size: 2rem;
+    display: block;
+    margin-bottom: 8px;
+}
+
+/* --- Notification item --- */
+.notif-item {
+    transition: background 0.2s;
+}
+
+/* --- Score colors --- */
+.score-high { color: #16a34a !important; }
+.score-mid { color: #ca8a04 !important; }
+.score-low { color: #dc2626 !important; }
+
+/* --- Petugas tambahan chip --- */
+.tambahan-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: var(--adm-primary);
+    color: #fff;
+    border: 1px solid var(--adm-primary);
+}
+.tambahan-chip .chip-close {
+    font-size: 0.85rem;
+    cursor: pointer;
+    color: rgba(255,255,255,0.8);
+}
+
+/* --- Dropdown item hoverable --- */
+.dropdown-item-hover {
+    font-size: 0.82rem;
+    cursor: pointer;
+    color: var(--adm-text);
+    transition: background 0.15s;
+}
+.dropdown-item-hover:hover {
+    background: var(--adm-bg);
+}
+
+/* --- Y-axis label --- */
+.y-label {
+    font-size: 0.6rem;
+    color: #94a3b8;
+}
+
+/* --- Legend item --- */
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.72rem;
+    color: #64748b;
+}
+.legend-dot-box {
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+    display: inline-block;
+}
+
+/* --- Legend row text --- */
+.legend-text {
+    font-size: 0.78rem;
+    color: #64748b;
+    font-weight: 500;
+}
+.legend-value {
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+/* --- Responsive stat badge mobile --- */
+@media (max-width: 575.98px) {
+    .stat-badge-mobile {
+        font-size: 0.55rem;
+        padding: 1px 5px;
+    }
+}
+
+/* --- Responsive flex column on mobile --- */
+@media (max-width: 768px) {
+    .flex-sm-col {
+        flex-direction: column;
+    }
+}
+
+/* --- Facility info text --- */
+.facility-name {
+    font-size: 0.84rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+.facility-meta {
+    font-size: 0.7rem;
+    color: #94a3b8;
+}
+
+/* --- Officer name text --- */
+.officer-name {
+    font-size: 0.82rem;
+    color: #0f172a;
+}
+
+/* --- Timestamp text --- */
+.timestamp-text {
+    font-size: 0.78rem !important;
+    color: #64748b !important;
+    white-space: nowrap !important;
+}
+
+/* --- Score text --- */
+.score-text {
+    font-size: 0.84rem;
+    font-weight: 700;
+}
+
+/* --- Notification button --- */
+.notif-btn {
+    font-size: 0.72rem;
+    border: none;
+    background: transparent;
+    font-weight: 600;
+}
+
+/* --- Notification text --- */
+.notif-title {
+    font-weight: 700;
+    color: var(--adm-text);
+    font-size: 0.85rem;
+}
+.notif-title-unread {
+    font-size: 0.78rem;
+}
+
+/* --- Notification message --- */
+.notif-msg {
+    font-size: 0.75rem;
+    line-height: 1.3;
+}
+.notif-msg-unread {
+    font-size: 0.75rem;
+    line-height: 1.3;
+    font-weight: 500;
+}
+
+/* --- Notification time --- */
+.notif-time {
+    font-size: 0.65rem;
+}
+
+/* --- Bar chart bar --- */
+.bar-active {
+    background: var(--adm-primary);
+    box-shadow: 0 4px 12px rgba(26, 86, 219, 0.2);
+}
+
+/* --- Empty table row --- */
+.empty-table td {
+    padding: 48px;
+    text-align: center;
+    color: #94a3b8;
+    font-size: 0.84rem;
+}
+.empty-td {
+    padding: 48px !important;
+    text-align: center !important;
+    color: var(--adm-muted) !important;
+    font-size: 0.84rem !important;
+}
+
+/* --- Inspection card --- */
+.inspection-card {
+    background: var(--adm-surface);
+    border: 1px solid var(--adm-border) !important;
+    color: var(--adm-text);
+}
+.inspection-card-text {
+    font-size: 0.9rem;
+    color: var(--adm-text);
+}
+
+/* --- Petugas status icons --- */
+.status-icon-wrap {
+    width: 80px;
+    height: 80px;
+}
+
+/* --- Form textarea --- */
+.form-textarea {
+    font-size: 0.78rem;
+    border-radius: 6px;
+    resize: none;
+    background: var(--adm-bg);
+    color: var(--adm-text);
+    border-color: var(--adm-border);
+}
+
+/* --- Nutup badge --- */
+.nutup-badge {
+    width: 6px;
+    height: 6px;
+}
+
+/* --- Inline form filter --- */
+.filter-btn {
+    border: 1.5px solid #e2e8f0;
+    background: #f8fafc;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #64748b;
+    border-radius: 8px;
+    height: 36px;
+    cursor: pointer;
+}
+
+/* --- Color dots --- */
+.dot-blue { background: #1a56db; }
+.dot-green { background: #22c55e; }
+.dot-yellow { background: #f59e0b; }
+.dot-red { background: #ef4444; }
+.dot-gray { background: #cbd5e1; }
+
+/* --- Sidebar brand logo --- */
+.sidebar-brand-logo {
+    height: 36px;
+    object-fit: contain;
+}
+
+/* --- Topbar logo mobile --- */
+.topbar-logo-mobile {
+    height: 32px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* --- Topbar icon btn --- */
+.topbar-icon-btn-custom {
+    background: var(--adm-bg);
+    cursor: pointer;
+}
+
+/* --- Notification dropdown width --- */
+.notif-dropdown {
+    width: 340px;
+    max-height: 450px;
+    overflow-y: auto;
+}
+
+/* --- Batal button --- */
+.btn-batal {
+    border-radius: 8px;
+}
+
+/* --- Simpan button --- */
+.btn-simpan {
+    border-radius: 8px;
+}
+
+/* --- Form addon --- */
+.form-addon {
+    background: var(--adm-bg);
+    color: var(--adm-muted);
+    padding: 10px 12px;
+    border: 1.5px solid var(--adm-border);
+}
+
+/* --- Auth label --- */
+.auth-label {
+    font-size: 10px;
+}
+
+/* --- Auth icon --- */
+.auth-icon {
+    font-size: 20px;
+}
+
+/* --- Background adm surface --- */
+.bg-adm { background: var(--adm-bg) !important; }
+
+/* --- Z-index --- */
+.z-5 { z-index: 5 !important; }
+
+/* --- Filter action button --- */
+.btn-filter-action {
+    font-size: 0.8rem !important;
+    font-weight: 700 !important;
+    border-radius: 8px !important;
+    height: 36px !important;
+}
+
+/* --- Circular add button --- */
+.btn-add-circle {
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    font-size: 1rem;
+    border: 1.5px dashed var(--adm-primary);
+    border-radius: 50%;
+    color: var(--adm-primary);
+    background: transparent;
+    cursor: pointer;
+}
+
+/* --- Tambahan petugas dropdown --- */
+.tambahan-dropdown {
+    display: none;
+    position: absolute;
+    bottom: 100%;
+    right: 0;
+    max-height: 180px;
+    overflow-y: auto;
+    min-width: 220px;
+    background: var(--adm-surface);
+    z-index: 1050;
+    border-color: var(--adm-border) !important;
+}
+
+/* --- Tambahan petugas wrapper --- */
+.tambahan-wrapper {
+    min-height: 38px;
+    background: var(--adm-bg);
+    border-color: var(--adm-border) !important;
+}
+
+/* --- Form input inside modal --- */
+.form-modal-input {
+    background: var(--adm-surface);
+    color: var(--adm-text);
+}
+
+/* --- Empty table row filler --- */
+.empty-row td {
+    height: 69px;
+    border: none;
+}
+
+/* --- CSS Variable text colors --- */
+.text-adm { color: var(--adm-text) !important; }
+.text-adm-muted { color: var(--adm-muted) !important; }
+
+/* --- Additional backgrounds --- */
+.bg-amber-soft { background: #fffbeb !important; }
+.bg-green-soft { background: #e8fdf0 !important; }
+
+/* --- Additional text colors --- */
+.text-emerald { color: #10b981 !important; }
+.text-amber-500 { color: #f59e0b !important; }
+
+/* --- Background + border combo --- */
+.bg-adm-border { background: var(--adm-bg); border-color: var(--adm-border) !important; }
+
+/* --- Background adm surface (light gray) --- */
+.bg-adm-surface { background: #f1f5f9 !important; }
+
+/* --- HR light divider --- */
+.hr-light {
+    border-color: #f1f5f9 !important;
+    margin: 1.25rem 0 !important;
+}
+
+/* --- Toggle button group radii --- */
+.rounded-left-6 { border-radius: 6px 0 0 6px !important; }
+.rounded-right-6 { border-radius: 0 6px 6px 0 !important; }
+
+/* --- Indicator dot (dynamic color) --- */
+.indicator-dot {
+    width: 6px !important;
+    height: 6px !important;
+    border-radius: 50% !important;
+    display: inline-block !important;
+    flex-shrink: 0 !important;
+}
+
+/* --- Fill height button --- */
+.btn-h-36 { height: 36px !important; }
+.btn-h-34 { height: 34px !important; }
+
+/* --- Max widths --- */
+.max-w-160 { max-width: 160px !important; }
+.max-w-180 { max-width: 180px !important; }
+.max-w-500 { max-width: 500px !important; }
+
+/* --- Min widths --- */
+.min-w-160 { min-width: 160px !important; }
+
+/* --- Border color adm --- */
+.border-adm-color { border-color: var(--adm-border) !important; }
+
+/* --- Border red 200 --- */
+.border-red-200 { border-color: #fecaca !important; }
+
+/* --- Background green 100 --- */
+.bg-green-100 { background: #dcfce7 !important; }
+
+/* --- Text dark green --- */
+.text-dark-green { color: #065f46 !important; }
+
+/* --- Text dark amber --- */
+.text-dark-amber { color: #92400e !important; }
+
+/* --- Background yellow 100 --- */
+.bg-yellow-100 { background: #fef3c7 !important; }
+
+/* --- Background green 200 --- */
+.bg-green-200 { background: #d1fae5 !important; }
+
+/* --- Text yellow 600 --- */
+.text-yellow-600 { color: #d97706 !important; }
+
+/* --- Text emerald 500 --- */
+.text-emerald-500 { color: #10b981 !important; }
+
+/* --- Text color variable --- */
+.text-adm-text { color: var(--adm-text) !important; }
+
+/* --- Empty row height --- */
+.h-empty { height: 69px !important; }
+.h-empty td { height: 69px; border: none; }
+
+/* --- Font size 0.95rem --- */
+.fs-095 { font-size: 0.95rem !important; }
+
+/* --- Font size 0.85rem --- */
+.fs-85 { font-size: 0.85rem !important; }
+
+/* --- Font size 0.8rem --- */
+.fs-8rem { font-size: 0.8rem !important; }
+
+/* --- Font size 0.9rem --- */
+.fs-9rem { font-size: 0.9rem !important; }
+
+/* --- Font size 1rem --- */
+.fs-1rem { font-size: 1rem !important; }
+
+/* --- Font size 1.05rem --- */
+.fs-105 { font-size: 1.05rem !important; }
+
+/* --- Gap 5px --- */
+.gap-5px { gap: 5px !important; }
+
+/* --- Padding 8px 16px --- */
+.py-8px { padding-top: 8px !important; padding-bottom: 8px !important; }
+.px-16px { padding-left: 16px !important; padding-right: 16px !important; }
+
+/* --- Form addon role badge --- */
+.form-addon-role {
+    background: var(--adm-bg);
+    color: var(--adm-muted);
+    font-weight: 600;
+    font-size: 0.84rem;
+    border: 1.5px solid var(--adm-border);
+    border-radius: 0 8px 8px 0;
+}
+
+/* =============================================
+   DARK MODE OVERRIDES
+   ============================================= */
+[data-theme="dark"] .text-slate-700,
+[data-theme="dark"] .text-slate-900,
+[data-theme="dark"] .facility-name,
+[data-theme="dark"] .officer-name,
+[data-theme="dark"] .score-text,
+[data-theme="dark"] .legend-value {
+    color: var(--adm-text) !important;
+}
+
+[data-theme="dark"] .text-slate-500,
+[data-theme="dark"] .text-slate-400,
+[data-theme="dark"] .facility-meta,
+[data-theme="dark"] .timestamp-text,
+[data-theme="dark"] .legend-text,
+[data-theme="dark"] .legend-item,
+[data-theme="dark"] .y-label,
+[data-theme="dark"] .empty-state {
+    color: var(--adm-muted) !important;
+}
+
+[data-theme="dark"] .text-blue-primary {
+    color: #38bdf8 !important;
+}
+
+[data-theme="dark"] .text-green-primary,
+[data-theme="dark"] .score-high {
+    color: #4ade80 !important;
+}
+
+[data-theme="dark"] .text-yellow-primary,
+[data-theme="dark"] .score-mid {
+    color: #fbbf24 !important;
+}
+
+[data-theme="dark"] .text-red-primary,
+[data-theme="dark"] .text-red-darker,
+[data-theme="dark"] .score-low {
+    color: #f87171 !important;
+}
+
+[data-theme="dark"] .text-emerald-500,
+[data-theme="dark"] .text-emerald {
+    color: #34d399 !important;
+}
+
+[data-theme="dark"] .text-yellow-600,
+[data-theme="dark"] .text-yellow-darker,
+[data-theme="dark"] .text-amber-500 {
+    color: #fbbf24 !important;
+}
+
+[data-theme="dark"] .text-green-darker {
+    color: #4ade80 !important;
+}
+
+[data-theme="dark"] .text-red-darkest {
+    color: #fca5a5 !important;
+}
+
+[data-theme="dark"] .bg-adm-surface {
+    background: var(--adm-surface) !important;
+}

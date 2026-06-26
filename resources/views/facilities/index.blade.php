@@ -8,14 +8,16 @@
 
 <!-- Overview Cards -->
 <div class="row g-3 mb-4">
-    <div class="col-6 col-md-4">
+
+    <!-- Total Facilities -->
+    <div class="col-6 col-sm-6 col-xl-3">
         <div class="stat-card">
             <div class="d-flex justify-content-between align-items-start">
-                <div class="stat-icon" style="background:#eff6ff;">
-                    <span class="material-symbols-outlined" style="color:#1a56db;">domain</span>
+                <div class="stat-icon bg-blue-50">
+                    <span class="material-symbols-outlined text-blue-primary">domain</span>
                 </div>
-                <span class="stat-badge" style="background:#dcfce7;color:#166534;">
-                    <span class="material-symbols-outlined" style="font-size:0.65rem;">trending_up</span> 12%
+                <span class="stat-badge bg-green-100 text-green-darker">
+                    <span class="material-symbols-outlined fs-15">trending_up</span> 12%
                 </span>
             </div>
             <div>
@@ -24,34 +26,55 @@
             </div>
         </div>
     </div>
-    <div class="col-6 col-md-4">
+
+    <!-- Bersih & Aman -->
+    <div class="col-6 col-sm-6 col-xl-3">
         <div class="stat-card">
             <div class="d-flex justify-content-between align-items-start">
-                <div class="stat-icon" style="background:#fef2f2;">
-                    <span class="material-symbols-outlined" style="color:#ef4444;">warning</span>
+                <div class="stat-icon bg-green-50">
+                    <span class="material-symbols-outlined text-green-primary">verified</span>
                 </div>
-                <span class="stat-badge" style="background:#fee2e2;color:#991b1b;">MENDESAK</span>
+                <span class="stat-badge bg-green-100 text-green-darker">Layak</span>
             </div>
             <div>
-                <div class="stat-value" style="color:#ef4444;">{{ $criticalCount }}</div>
-                <div class="stat-label">Status Tidak Layak</div>
+                <div class="stat-value text-green-primary">{{ $compliantCount }}</div>
+                <div class="stat-label">Bersih & Aman</div>
             </div>
         </div>
     </div>
-    <div class="col-12 col-md-4">
+
+    <!-- Perlu Dibersihkan -->
+    <div class="col-6 col-sm-6 col-xl-3">
         <div class="stat-card">
             <div class="d-flex justify-content-between align-items-start">
-                <div class="stat-icon" style="background:#fefce8;">
-                    <span class="material-symbols-outlined" style="color:#ca8a04;">schedule</span>
+                <div class="stat-icon bg-yellow-50">
+                    <span class="material-symbols-outlined text-yellow-primary">cleaning_services</span>
                 </div>
-                <span class="stat-badge" style="background:#fef9c3;color:#854d0e;">Tertunda</span>
+                <span class="stat-badge bg-yellow-100 text-yellow-darker">Cukup Baik</span>
             </div>
             <div>
-                <div class="stat-value" style="color:#ca8a04;">{{ $pendingCount }}</div>
-                <div class="stat-label">Inspeksi Menunggu</div>
+                <div class="stat-value text-yellow-primary">{{ $pendingCount }}</div>
+                <div class="stat-label">Perlu Dibersihkan</div>
             </div>
         </div>
     </div>
+
+    <!-- Butuh Perhatian -->
+    <div class="col-6 col-sm-6 col-xl-3">
+        <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-start">
+                <div class="stat-icon bg-red-50">
+                    <span class="material-symbols-outlined text-red-primary">warning</span>
+                </div>
+                <span class="stat-badge bg-red-100 text-red-darkest">Buruk</span>
+            </div>
+            <div>
+                <div class="stat-value text-red-primary">{{ $criticalCount }}</div>
+                <div class="stat-label">Perlu Diperbaiki</div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <!-- Controls Bar -->
@@ -64,8 +87,8 @@
                 <input type="text" name="search" id="searchInput" value="{{ $search ?? '' }}" placeholder="Cari nama fasilitas..." autocomplete="off"/>
             </div>
             <!-- Filter Dropdown -->
-            <div style="min-width: 180px;">
-                <select name="jenis_fasilitas" id="filterJenis" class="form-select" style="border:1.5px solid #e2e8f0;background:#f8fafc;font-size:0.8rem;font-weight:600;color:#64748b;border-radius:8px;height:36px;cursor:pointer;">
+            <div class="min-w-180">
+                <select name="jenis_fasilitas" id="filterJenis" class="form-select filter-btn">
                     <option value="">— Semua Jenis —</option>
                     @foreach($listJenis as $jf)
                         <option value="{{ $jf->slug }}" {{ ($jenis ?? '') === $jf->slug ? 'selected' : '' }}>{{ $jf->nama_jenis }}</option>
@@ -75,13 +98,11 @@
             <!-- Add Facility & Jenis Fasilitas Button for Admin -->
             @if(Auth::user()->role === 'admin')
                 <div class="d-flex gap-2">
-                    <button type="button" class="btn btn-primary btn-sm d-flex align-items-center gap-1 px-3" data-bs-toggle="modal" data-bs-target="#jenis-fasilitas-modal"
-                        style="font-size:0.8rem;font-weight:700;border-radius:8px;height:36px;">
-                        <span class="material-symbols-outlined" style="font-size:0.95rem;">category</span> Jenis Fasilitas
+                    <button type="button" class="btn btn-primary btn-sm d-flex align-items-center gap-1 px-3 btn-filter-action" data-bs-toggle="modal" data-bs-target="#jenis-fasilitas-modal">
+                        <span class="material-symbols-outlined icon-sm">category</span> Jenis Fasilitas
                     </button>
-                    <button type="button" class="btn btn-primary btn-sm d-flex align-items-center gap-1 px-3" data-bs-toggle="modal" data-bs-target="#new-facility-modal"
-                        style="font-size:0.8rem;font-weight:700;border-radius:8px;height:36px;">
-                        <span class="material-symbols-outlined" style="font-size:0.95rem;">add</span> Fasilitas Baru
+                    <button type="button" class="btn btn-primary btn-sm d-flex align-items-center gap-1 px-3 btn-filter-action" data-bs-toggle="modal" data-bs-target="#new-facility-modal">
+                        <span class="material-symbols-outlined icon-sm">add</span> Fasilitas Baru
                     </button>
                 </div>
             @endif
@@ -106,7 +127,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">
-                    <span class="material-symbols-outlined align-middle me-1" style="font-size:1rem;color:#1a56db;">add_circle</span>
+                    <span class="material-symbols-outlined align-middle me-1 icon-md text-blue-primary">add_circle</span>
                     Tambah Fasilitas Baru
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -134,7 +155,7 @@
                             @enderror
                         </div>
                         <div class="col-6">
-                            <label class="form-label-admin">Petugas</label>
+                            <label class="form-label-admin">Penanggung Jawab Utama</label>
                             <select name="petugas_id" required class="form-select @error('petugas_id') is-invalid @enderror">
                                 <option value="" disabled selected>Pilih Petugas</option>
                                 @foreach($listPetugas as $p)
@@ -145,6 +166,22 @@
                                 <div class="invalid-feedback d-block">{{ $message }}</div>
                             @enderror
                         </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label-admin">Petugas Tambahan</label>
+                        <div id="create-tambahan-wrapper" class="d-flex flex-wrap align-items-center gap-2 p-2 border rounded-3 tambahan-wrapper">
+                            <div id="create-tambahan-chips" class="d-flex flex-wrap align-items-center gap-1">
+                            </div>
+                            <div class="position-relative z-5">
+                                <button type="button" id="create-add-tambahan-btn" class="btn btn-sm d-flex align-items-center justify-content-center btn-add-circle" title="Tambah petugas tambahan">
+                                    <span class="material-symbols-outlined icon-md">add</span>
+                                </button>
+                                <div id="create-tambahan-dropdown" class="rounded-3 border shadow-sm py-1 tambahan-dropdown">
+                                </div>
+                            </div>
+                        </div>
+                        <div id="create-tambahan-hidden-container"></div>
+                        <small class="text-muted fs-13">Klik + untuk menambahkan petugas tambahan</small>
                     </div>
                     <div class="mb-3">
                         <label class="form-label-admin">Lokasi / Detail Tempat</label>
@@ -162,12 +199,12 @@
                     </div>
                     <div class="form-check">
                         <input type="checkbox" name="status_aktif" value="1" id="status_aktif" checked class="form-check-input"/>
-                        <label for="status_aktif" class="form-check-label" style="font-size:0.82rem;font-weight:600;">Aktif & Siap Inspeksi</label>
+                        <label for="status_aktif" class="form-check-label fs-9 fw-semibold">Aktif & Siap Inspeksi</label>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-sm btn-light px-4 fw-600" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-sm btn-primary px-4 fw-700">Simpan Fasilitas</button>
+                    <button type="button" class="btn btn-sm btn-light px-4 fw-semibold" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-sm btn-primary px-4 fw-bold">Simpan Fasilitas</button>
                 </div>
             </form>
         </div>
@@ -180,7 +217,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">
-                    <span class="material-symbols-outlined align-middle me-1" style="font-size:1rem;color:#1a56db;">edit</span>
+                    <span class="material-symbols-outlined align-middle me-1 icon-md text-blue-primary">edit</span>
                     Ubah Data Fasilitas
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -202,7 +239,7 @@
                             </select>
                         </div>
                         <div class="col-6">
-                            <label class="form-label-admin">Petugas</label>
+                            <label class="form-label-admin">Penanggung Jawab Utama</label>
                             <select name="petugas_id" id="edit_petugas" required class="form-select">
                                 <option value="" disabled>Pilih Petugas</option>
                                 @foreach($listPetugas as $p)
@@ -210,6 +247,21 @@
                                 @endforeach
                             </select>
                         </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label-admin">Petugas Tambahan</label>
+                        <div id="edit-tambahan-wrapper" class="d-flex flex-wrap align-items-center gap-2 p-2 border rounded-3 tambahan-wrapper">
+                            <div id="edit-tambahan-chips" class="d-flex flex-wrap align-items-center gap-1">
+                            </div>
+                            <div class="position-relative z-5">
+                                <button type="button" id="edit-add-tambahan-btn" class="btn btn-sm d-flex align-items-center justify-content-center btn-add-circle" title="Tambah petugas tambahan">
+                                    <span class="material-symbols-outlined icon-md">add</span>
+                                </button>
+                                <div id="edit-tambahan-dropdown" class="rounded-3 border shadow-sm py-1 tambahan-dropdown">
+                                </div>
+                            </div>
+                        </div>
+                        <div id="edit-tambahan-hidden-container"></div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label-admin">Lokasi / Detail Tempat</label>
@@ -221,12 +273,12 @@
                     </div>
                     <div class="form-check">
                         <input type="checkbox" name="status_aktif" value="1" id="edit_status" class="form-check-input"/>
-                        <label for="edit_status" class="form-check-label" style="font-size:0.82rem;font-weight:600;">Aktif & Siap Inspeksi</label>
+                        <label for="edit_status" class="form-check-label fs-9 fw-semibold">Aktif & Siap Inspeksi</label>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-sm btn-light px-4" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-sm btn-primary px-4 fw-700">Simpan Perubahan</button>
+                    <button type="submit" class="btn btn-sm btn-primary px-4 fw-bold">Simpan Perubahan</button>
                 </div>
             </form>
         </div>
@@ -239,37 +291,37 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">
-                    <span class="material-symbols-outlined align-middle me-1" style="font-size:1rem;color:#1a56db;">category</span>
+                    <span class="material-symbols-outlined align-middle me-1 icon-md text-blue-primary">category</span>
                     Kelola Jenis Fasilitas
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
                 <!-- Tambah Jenis Fasilitas Form -->
-                <form action="{{ route('jenis-fasilitas.store') }}" method="POST" class="mb-4 p-3 border rounded-3" style="background: var(--adm-bg); border-color: var(--adm-border) !important;">
+                <form action="{{ route('jenis-fasilitas.store') }}" method="POST" class="mb-4 p-3 border rounded-3 border-adm bg-adm">
                     @csrf
                     <div class="row g-2 align-items-end">
                         <div class="col-sm-8">
                             <label class="form-label-admin">Nama Jenis Fasilitas Baru</label>
-                            <input type="text" name="nama_jenis" required class="form-control form-control-sm @error('nama_jenis') is-invalid @enderror" placeholder="Contoh: Lab Komputer" style="background: var(--adm-surface); color: var(--adm-text);" value="{{ old('nama_jenis') }}"/>
+                            <input type="text" name="nama_jenis" required class="form-control form-control-sm form-modal-input @error('nama_jenis') is-invalid @enderror" placeholder="Contoh: Lab Komputer" value="{{ old('nama_jenis') }}"/>
                             @error('nama_jenis')
                                 <div class="invalid-feedback d-block">{{ $message }}</div>
                             @enderror
                         </div>
                         <div class="col-sm-4">
-                            <button type="submit" class="btn btn-primary btn-sm w-100 fw-700" style="height:34px;">Tambah Jenis</button>
+                            <button type="submit" class="btn btn-primary btn-sm w-100 fw-bold btn-h-34">Tambah Jenis</button>
                         </div>
                     </div>
                 </form>
 
                 <!-- List Tabel Jenis Fasilitas -->
                 <div class="table-responsive">
-                    <table class="table-admin" style="font-size:0.82rem; width: 100%;">
+                    <table class="table-admin fs-9 w-100">
                         <thead>
                             <tr>
                                 <th>Nama Jenis</th>
                                 <th>Slug</th>
-                                <th style="width:140px;">Aksi</th>
+                                <th class="w-140">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -279,20 +331,20 @@
                                         <!-- Form Edit Inline -->
                                         <form id="form-edit-jenis-{{ $jf->id }}" action="{{ route('jenis-fasilitas.update', $jf->id) }}" method="POST" class="m-0 d-none">
                                             @csrf @method('PUT')
-                                            <input type="text" name="nama_jenis" value="{{ $jf->nama_jenis }}" required class="form-control form-control-sm" style="background: var(--adm-surface); color: var(--adm-text);"/>
+                                            <input type="text" name="nama_jenis" value="{{ $jf->nama_jenis }}" required class="form-control form-control-sm form-modal-input"/>
                                         </form>
                                         <span id="text-jenis-{{ $jf->id }}">{{ $jf->nama_jenis }}</span>
                                     </td>
                                     <td><code>{{ $jf->slug }}</code></td>
                                     <td>
                                         <div class="d-flex gap-1">
-                                            <button type="button" id="btn-edit-jenis-{{ $jf->id }}" onclick="toggleEditJenis({{ $jf->id }})" class="btn btn-sm btn-outline-secondary py-0 px-2" style="font-size: 0.72rem;">Ubah</button>
-                                            <button type="button" id="btn-save-jenis-{{ $jf->id }}" onclick="document.getElementById('form-edit-jenis-{{ $jf->id }}').submit()" class="btn btn-sm btn-success py-0 px-2 d-none" style="font-size: 0.72rem;">Simpan</button>
-                                            <button type="button" id="btn-cancel-jenis-{{ $jf->id }}" onclick="toggleEditJenis({{ $jf->id }}, true)" class="btn btn-sm btn-light py-0 px-2 d-none" style="font-size: 0.72rem;">Batal</button>
+                                            <button type="button" id="btn-edit-jenis-{{ $jf->id }}" onclick="toggleEditJenis({{ $jf->id }})" class="btn btn-sm btn-outline-secondary py-0 px-2 fs-12">Ubah</button>
+                                            <button type="button" id="btn-save-jenis-{{ $jf->id }}" onclick="document.getElementById('form-edit-jenis-{{ $jf->id }}').submit()" class="btn btn-sm btn-success py-0 px-2 d-none fs-12">Simpan</button>
+                                            <button type="button" id="btn-cancel-jenis-{{ $jf->id }}" onclick="toggleEditJenis({{ $jf->id }}, true)" class="btn btn-sm btn-light py-0 px-2 d-none fs-12">Batal</button>
                                             
                                             <form action="{{ route('jenis-fasilitas.destroy', $jf->id) }}" method="POST" class="delete-form m-0" data-title="Hapus Jenis Fasilitas" data-text="Apakah Anda yakin ingin menghapus jenis fasilitas ini?">
                                                 @csrf @method('DELETE')
-                                                <button type="button" class="btn btn-sm btn-outline-danger py-0 px-2 btn-delete" style="font-size: 0.72rem;">Hapus</button>
+                                                <button type="button" class="btn btn-sm btn-outline-danger py-0 px-2 btn-delete fs-12">Hapus</button>
                                             </form>
                                         </div>
                                     </td>
@@ -307,7 +359,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-sm btn-light px-4 fw-600" data-bs-dismiss="modal">Tutup</button>
+                <button type="button" class="btn btn-sm btn-light px-4 fw-semibold" data-bs-dismiss="modal">Tutup</button>
             </div>
         </div>
     </div>
@@ -316,4 +368,11 @@
 
 
 @endif
+
+@push('scripts')
+<script>
+    window._allPetugas = @json($listPetugas->map(fn($p) => ['id' => $p->id, 'name' => $p->name]));
+</script>
+@endpush
+
 @endsection

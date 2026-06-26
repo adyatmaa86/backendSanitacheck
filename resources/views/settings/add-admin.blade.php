@@ -21,7 +21,7 @@
                     <label class="form-label-admin">Nama Lengkap</label>
                     <div class="input-group">
                         <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name') }}" placeholder="Masukkan nama admin" required />
-                        <span class="input-group-text fw-600" style="background:var(--adm-bg);color:var(--adm-muted);padding:10px 12px;border:1.5px solid var(--adm-border);">(Admin)</span>
+                        <span class="input-group-text fw-semibold form-addon">(Admin)</span>
                     </div>
                     @error('name')
                         <div class="invalid-feedback d-block">{{ $message }}</div>
@@ -57,17 +57,17 @@
                     <input type="password" name="password_confirmation" class="form-control" placeholder="Ulangi kata sandi" required />
                 </div>
 
-                <div class="info-box mb-4" style="background:#fef2f2;border-color:#fecaca;">
-                    <span class="material-symbols-outlined" style="color:#ef4444;">warning</span>
+                <div class="info-box mb-4 bg-red-50 border-red-200">
+                    <span class="material-symbols-outlined text-red-primary">warning</span>
                     <div>
-                        <h6 style="color:#991b1b;">Perhatian</h6>
-                        <p style="color:#991b1b;">Akun yang dibuat akan memiliki role <strong>Admin</strong> dengan hak akses penuh: mengelola fasilitas, inspeksi, dan akun pengguna lain. Pastikan hanya memberikan akses ini kepada pihak yang terpercaya.</p>
+                        <h6 class="text-red-darkest">Perhatian</h6>
+                        <p class="text-red-darkest">Akun yang dibuat akan memiliki role <strong>Admin</strong> dengan hak akses penuh: mengelola fasilitas, inspeksi, dan akun pengguna lain. Pastikan hanya memberikan akses ini kepada pihak yang terpercaya.</p>
                     </div>
                 </div>
 
                 <div class="d-flex justify-content-end gap-2">
-                    <a href="{{ route('dashboard') }}" class="btn btn-sm btn-light px-4 fw-600" style="border-radius:8px;">Batal</a>
-                    <button type="submit" class="btn btn-sm btn-primary px-4 fw-700" style="border-radius:8px;">Tambah Admin</button>
+                    <a href="{{ route('dashboard') }}" class="btn btn-sm btn-light px-4 fw-semibold rounded-8">Batal</a>
+                    <button type="submit" class="btn btn-sm btn-primary px-4 fw-bold rounded-8">Tambah Admin</button>
                 </div>
             </form>
         </div>

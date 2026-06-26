@@ -22,7 +22,7 @@
                     <label class="form-label-admin">Nama Lengkap</label>
                     <div class="input-group">
                         <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name', Auth::user()->name) }}" required />
-                        <span class="input-group-text" style="background:var(--adm-bg);color:var(--adm-muted);font-weight:600;font-size:0.84rem;border:1.5px solid var(--adm-border);border-radius:0 8px 8px 0;">({{ ucfirst(Auth::user()->role) }})</span>
+                        <span class="input-group-text form-addon-role">({{ ucfirst(Auth::user()->role) }})</span>
                     </div>
                     @error('name')
                         <div class="invalid-feedback d-block">{{ $message }}</div>
@@ -51,13 +51,13 @@
                     <input type="hidden" name="role" value="{{ Auth::user()->role }}" />
                 </div>
 
-                <hr class="my-4" style="border-color:#e2e8f0;">
+                <hr class="my-4 border-adm-color">
 
                 <div class="form-card-title">
                     <span class="material-symbols-outlined">lock</span>
                     Ubah Kata Sandi
                 </div>
-                <p style="font-size:0.75rem;color:#94a3b8;margin-bottom:16px;">Kosongkan jika tidak ingin mengubah kata sandi.</p>
+                <p class="fs-11 text-slate-400 mb-3">Kosongkan jika tidak ingin mengubah kata sandi.</p>
 
                 <div class="mb-3">
                     <label class="form-label-admin">Kata Sandi Baru</label>
@@ -73,8 +73,8 @@
                 </div>
 
                 <div class="d-flex justify-content-end gap-2 mt-4">
-                    <a href="{{ route('dashboard') }}" class="btn btn-sm btn-light px-4 fw-600" style="border-radius:8px;">Batal</a>
-                    <button type="submit" class="btn btn-sm btn-primary px-4 fw-700" style="border-radius:8px;">Simpan Perubahan</button>
+                    <a href="{{ route('dashboard') }}" class="btn btn-sm btn-light px-4 fw-semibold rounded-8">Batal</a>
+                    <button type="submit" class="btn btn-sm btn-primary px-4 fw-bold rounded-8">Simpan Perubahan</button>
                 </div>
             </form>
         </div>

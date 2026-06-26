@@ -34,7 +34,16 @@ class ApiController extends Controller
      */
     public function index()
     {
-        $facilities = Fasilitas::with('petugas', 'latestInspection')->where('status_aktif', true)->get()->map(function ($f) {
+        $facilities = Fasilitas::with('petugas', 'petugasTambahan', 'latestInspection')->where('status_aktif', true)->get()->map(function ($f) {
+            $allPetugas = collect();
+            if ($f->petugas) {
+                $allPetugas->push($f->petugas);
+            }
+            foreach ($f->petugasTambahan as $pt) {
+                $allPetugas->push($pt);
+            }
+            $allPetugas = $allPetugas->unique('id')->values();
+
             return [
                 'id' => $f->id,
                 'nama_fasilitas' => $f->nama_fasilitas,
@@ -43,6 +52,12 @@ class ApiController extends Controller
                 'penanggung_jawab' => $f->penanggung_jawab,
                 'nama_petugas' => $f->petugas ? $f->petugas->name : 'Tidak ada',
                 'no_telp_petugas' => $f->petugas ? $f->petugas->phone_number : '',
+                'petugas_list' => $allPetugas->map(fn($p) => [
+                    'id' => $p->id,
+                    'nama' => $p->name,
+                    'no_telp' => $p->phone_number,
+                    'status_pengerjaan' => $p->status_pengerjaan ?? 'ready',
+                ])->values()->toArray(),
                 'status_aktif' => $f->status_aktif,
                 'foto_before' => $f->foto_before,
                 'foto_after' => $f->foto_after,
@@ -63,7 +78,7 @@ class ApiController extends Controller
      */
     public function inspectionHistory($id)
     {
-        $facility = Fasilitas::with('petugas')->find($id);
+        $facility = Fasilitas::with('petugas', 'petugasTambahan')->find($id);
 
         if (!$facility) {
             return response()->json([
@@ -71,6 +86,15 @@ class ApiController extends Controller
                 'message' => 'Facility not found'
             ], 404);
         }
+
+        $allPetugas = collect();
+        if ($facility->petugas) {
+            $allPetugas->push($facility->petugas);
+        }
+        foreach ($facility->petugasTambahan as $pt) {
+            $allPetugas->push($pt);
+        }
+        $allPetugas = $allPetugas->unique('id')->values();
 
         $inspections = $facility->inspections()
             ->with('officer:id,name,email')
@@ -87,6 +111,12 @@ class ApiController extends Controller
                 'penanggung_jawab' => $facility->penanggung_jawab,
                 'nama_petugas' => $facility->petugas ? $facility->petugas->name : 'Tidak ada',
                 'no_telp_petugas' => $facility->petugas ? $facility->petugas->phone_number : '',
+                'petugas_list' => $allPetugas->map(fn($p) => [
+                    'id' => $p->id,
+                    'nama' => $p->name,
+                    'no_telp' => $p->phone_number,
+                    'status_pengerjaan' => $p->status_pengerjaan ?? 'ready',
+                ])->values()->toArray(),
                 'foto_before' => $facility->foto_before,
                 'foto_after' => $facility->foto_after,
                 'cleanliness_status' => $facility->cleanliness_status,
@@ -120,6 +150,43 @@ class ApiController extends Controller
         }
 
         $tanggal = Carbon::parse($request->tanggal_inspeksi);
+        $isCompleted = $request->status_tindak_lanjut === 'aman';
+        $facility = Fasilitas::findOrFail($request->fasilitas_id);
+
+        $fotoPath = null;
+        if ($request->hasFile('foto_after')) {
+            // Hapus file lama jika tidak digunakan lagi
+            if ($facility->foto_before) {
+                $isUsed = Inspeksi::where('foto', $facility->foto_before)
+                    ->orWhere('foto_selesai', $facility->foto_before)
+                    ->exists();
+                if (!$isUsed) {
+                    \Illuminate\Support\Facades\Storage::disk('public')->delete($facility->foto_before);
+                }
+            }
+            if ($facility->foto_after) {
+                $isUsed = Inspeksi::where('foto', $facility->foto_after)
+                    ->orWhere('foto_selesai', $facility->foto_after)
+                    ->exists();
+                if (!$isUsed) {
+                    \Illuminate\Support\Facades\Storage::disk('public')->delete($facility->foto_after);
+                }
+            }
+
+            $fotoPath = $request->file('foto_after')->store('facilities', 'public');
+
+            if ($isCompleted) {
+                $facility->update([
+                    'foto_before' => null,
+                    'foto_after' => $fotoPath,
+                ]);
+            } else {
+                $facility->update([
+                    'foto_before' => $fotoPath,
+                    'foto_after' => null,
+                ]);
+            }
+        }
 
         $inspection = Inspeksi::create([
             'fasilitas_id' => $request->fasilitas_id,
@@ -130,8 +197,14 @@ class ApiController extends Controller
             'ketersediaan_sabun' => $request->ketersediaan_sabun,
             'bau_tidak_sedap' => $request->bau_tidak_sedap,
             'catatan' => $request->catatan,
+            'foto' => $fotoPath,
             'status_tindak_lanjut' => $request->status_tindak_lanjut,
+            'is_completed' => $isCompleted,
         ]);
+
+        if (!$isCompleted) {
+            $request->user()->update(['status_pengerjaan' => 'aktif']);
+        }
 
         return response()->json([
             'status' => 'success',
@@ -147,15 +220,24 @@ class ApiController extends Controller
     public function filterByStatus($status)
     {
         // Valid status values: bersih, perlu dibersihkan, buruk
-        $validStatuses = ['bersih', 'perlu dibersihkan', 'buruk'];
+        $validStatuses = ['bersih', 'perlu dibersihkan', 'buruk', 'belum_inspeksi'];
         if (!in_array($status, $validStatuses)) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Invalid status filter. Choose: bersih, perlu dibersihkan, atau buruk'
+                'message' => 'Invalid status filter. Choose: bersih, perlu dibersihkan, buruk, atau belum_inspeksi'
             ], 400);
         }
 
-        $facilities = Fasilitas::with('petugas', 'latestInspection')->where('status_aktif', true)->get()->map(function ($f) {
+        $facilities = Fasilitas::with('petugas', 'petugasTambahan', 'latestInspection')->where('status_aktif', true)->get()->map(function ($f) {
+            $allPetugas = collect();
+            if ($f->petugas) {
+                $allPetugas->push($f->petugas);
+            }
+            foreach ($f->petugasTambahan as $pt) {
+                $allPetugas->push($pt);
+            }
+            $allPetugas = $allPetugas->unique('id')->values();
+
             return [
                 'id' => $f->id,
                 'nama_fasilitas' => $f->nama_fasilitas,
@@ -164,6 +246,12 @@ class ApiController extends Controller
                 'penanggung_jawab' => $f->penanggung_jawab,
                 'nama_petugas' => $f->petugas ? $f->petugas->name : 'Tidak ada',
                 'no_telp_petugas' => $f->petugas ? $f->petugas->phone_number : '',
+                'petugas_list' => $allPetugas->map(fn($p) => [
+                    'id' => $p->id,
+                    'nama' => $p->name,
+                    'no_telp' => $p->phone_number,
+                    'status_pengerjaan' => $p->status_pengerjaan ?? 'ready',
+                ])->values()->toArray(),
                 'status_aktif' => $f->status_aktif,
                 'foto_before' => $f->foto_before,
                 'foto_after' => $f->foto_after,

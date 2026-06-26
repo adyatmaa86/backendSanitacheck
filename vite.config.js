@@ -16,7 +16,9 @@ export default defineConfig({
                 'resources/js/facilities.js',
                 'resources/js/inspections.js',
                 'resources/js/history.js',
-                'resources/js/admin-list.js'
+                'resources/js/admin-list.js',
+                'resources/js/petugas-tugas.js',
+                'resources/css/utilities.css'
             ],
             refresh: true,
         }),

@@ -20,14 +20,14 @@ class DatabaseSeeder extends Seeder
         $admin = User::create([
             'name' => 'Dr. Sarah Chen (Admin)',
             'email' => 'admin@sanitacheck.com',
-            'password' => Hash::make('password123'),
+            'password' => Hash::make('12345678'),
             'role' => 'admin',
         ]);
 
         $petugas = User::create([
             'name' => 'John Schmidt (Petugas)',
             'email' => 'petugas@sanitacheck.com',
-            'password' => Hash::make('password123'),
+            'password' => Hash::make('12345678'),
             'role' => 'petugas',
         ]);
 
@@ -76,7 +76,7 @@ class DatabaseSeeder extends Seeder
             'jenis_fasilitas' => 'ruang-kelas',
             'lokasi' => 'Gedung D, Lantai 4',
             'penanggung_jawab' => $petugas->id,
-            'status_aktif' => false, // Non-aktif
+            'status_aktif' => true,
         ]);
 
         // 3. Create Inspections (History)

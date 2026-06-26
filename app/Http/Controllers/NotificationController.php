@@ -33,10 +33,14 @@ class NotificationController extends Controller
 
     public function bulkDestroy(Request $request)
     {
-        if (auth()->check() && $request->has('notification_ids')) {
-            auth()->user()->notifications()->whereIn('id', $request->notification_ids)->delete();
-            return redirect()->back()->with('success', 'Notifikasi terpilih berhasil dihapus.');
+        if (auth()->check()) {
+            if ($request->has('notification_ids') && count($request->notification_ids) > 0) {
+                auth()->user()->notifications()->whereIn('id', $request->notification_ids)->delete();
+                return redirect()->back()->with('success', 'Notifikasi terpilih berhasil dihapus.');
+            }
+            auth()->user()->notifications()->delete();
+            return redirect()->back()->with('success', 'Semua notifikasi berhasil dihapus.');
         }
-        return redirect()->back()->with('error', 'Tidak ada notifikasi yang terpilih.');
+        return redirect()->back()->with('error', 'Gagal menghapus notifikasi.');
     }
 }

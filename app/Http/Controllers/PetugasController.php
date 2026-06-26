@@ -47,8 +47,8 @@ class PetugasController extends Controller
 
         $user = User::where('role', 'petugas')->findOrFail($id);
         
-        // Remove or clear relation in facilities penanggung_jawab
         \App\Models\Fasilitas::where('penanggung_jawab', $user->id)->update(['penanggung_jawab' => null]);
+        \DB::table('fasilitas_petugas')->where('user_id', $user->id)->delete();
         
         $user->delete();
 

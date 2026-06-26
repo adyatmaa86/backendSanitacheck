@@ -14,11 +14,16 @@ return new class extends Migration
         Schema::create('fasilitas', function (Blueprint $table) {
             $table->id();
             $table->string('nama_fasilitas');
-            $table->string('jenis_fasilitas'); // toilet, kantin, ruang tunggu, tempat cuci tangan, ruang kelas
+            $table->string('jenis_fasilitas')->index();
             $table->string('lokasi');
-            $table->string('penanggung_jawab');
+            $table->unsignedBigInteger('penanggung_jawab')->nullable();
             $table->boolean('status_aktif')->default(true);
+            $table->string('foto_before')->nullable();
+            $table->string('foto_after')->nullable();
             $table->timestamps();
+
+            $table->foreign('penanggung_jawab')->references('id')->on('users')->onDelete('set null');
+            $table->foreign('jenis_fasilitas')->references('slug')->on('jenis_fasilitas')->onDelete('restrict');
         });
     }
 

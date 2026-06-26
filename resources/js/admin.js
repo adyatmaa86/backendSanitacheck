@@ -69,29 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 
-    /* ---- 4. BAR CHART — HOVER TOOLTIP ---- */
-    document.querySelectorAll('.bar-col').forEach(col => {
-        const bar  = col.querySelector('.bar');
-        const lbl  = col.querySelector('.bar-label');
-        if (!bar) return;
 
-        const height = parseInt(bar.style.height || '0');
-
-        bar.addEventListener('mouseenter', () => {
-            let tip = col.querySelector('.bar-tip');
-            if (!tip) {
-                tip = document.createElement('div');
-                tip.className = 'bar-tip';
-                col.appendChild(tip);
-            }
-            tip.textContent = height + '%';
-            tip.style.opacity = '1';
-        });
-        bar.addEventListener('mouseleave', () => {
-            const tip = col.querySelector('.bar-tip');
-            if (tip) tip.style.opacity = '0';
-        });
-    });
 
 
     /* ---- 5. BOOTSTRAP MODAL HELPERS ---- */
@@ -158,7 +136,57 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 
-    /* ---- 10. DARK MODE THEME TOGGLE ---- */
+    /* ---- 10.5 NOTIFICATION DROPDOWN — DELETE BUTTON ---- */
+    const notifCheckboxes = document.querySelectorAll('.notif-checkbox');
+    const deleteNotifBtn = document.getElementById('deleteNotifBtn');
+    const deleteNotifText = document.getElementById('deleteNotifText');
+    const deleteNotifIcon = document.getElementById('deleteNotifIcon');
+
+    function updateDeleteNotifButton() {
+        const checked = document.querySelectorAll('.notif-checkbox:checked').length;
+        if (deleteNotifText) {
+            deleteNotifText.textContent = checked === 0 ? 'Hapus Semua' : `Hapus Terpilih (${checked})`;
+        }
+        if (deleteNotifIcon) {
+            deleteNotifIcon.textContent = checked === 0 ? 'delete_sweep' : 'delete';
+        }
+    }
+
+    notifCheckboxes.forEach(cb => {
+        cb.addEventListener('change', updateDeleteNotifButton);
+    });
+
+    if (deleteNotifBtn) {
+        deleteNotifBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const checked = document.querySelectorAll('.notif-checkbox:checked').length;
+            const isHapusSemua = checked === 0;
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+
+            Swal.fire({
+                title: isHapusSemua ? 'Hapus Semua Notifikasi?' : 'Hapus Notifikasi Terpilih?',
+                text: isHapusSemua
+                    ? 'Semua notifikasi akan dihapus permanen. Lanjutkan?'
+                    : `${checked} notifikasi terpilih akan dihapus permanen. Lanjutkan?`,
+                icon: 'warning',
+                background: isDark ? '#1e293b' : '#fff',
+                color: isDark ? '#e2e8f0' : '#0f172a',
+                showCancelButton: true,
+                confirmButtonColor: '#dc2626',
+                cancelButtonColor: '#64748b',
+                confirmButtonText: 'Ya, Hapus',
+                cancelButtonText: 'Batal',
+                reverseButtons: true,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('notifForm').submit();
+                }
+});
+
+        });
+    }
+
+    /* ---- 11. DARK MODE THEME TOGGLE ---- */
     const themeToggle = document.getElementById('themeToggle');
     const currentTheme = localStorage.getItem('theme') || 'light';
 
@@ -183,3 +211,55 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 });
+
+/* ---- 12. BF-CACHE PREVENTION ---- */
+window.addEventListener('pageshow', function (event) {
+    if (event.persisted) {
+        window.location.reload();
+    }
+});
+
+/* ---- 13. PANTAU PETUGAS — AJAX SEARCH & PAGINATION ---- */
+window.initPantauFilter = function() {
+    const form = document.getElementById('filterForm');
+    const searchInput = document.getElementById('searchInput');
+    const tableContainer = document.getElementById('tableContainer');
+    
+    let timeout = null;
+
+    function fetchPetugas(page = '') {
+        if (!form || !searchInput || !tableContainer) return;
+        const searchVal = searchInput.value;
+        let url = new URL(form.action);
+        if (searchVal) url.searchParams.set('search', searchVal);
+        if (page) url.searchParams.set('page', page);
+        fetch(url, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(response => response.text())
+        .then(html => {
+            tableContainer.innerHTML = html;
+            bindPagination();
+        })
+        .catch(error => console.error('Error fetching petugas:', error));
+    }
+
+    function bindPagination() {
+        if (!tableContainer) return;
+        tableContainer.querySelectorAll('.pagination a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const urlObj = new URL(this.href);
+                fetchPetugas(urlObj.searchParams.get('page'));
+            });
+        });
+    }
+
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => fetchPetugas(), 300);
+        });
+    }
+    bindPagination();
+};

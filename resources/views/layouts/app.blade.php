@@ -10,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet"/>
     <!-- Custom Admin CSS & JS via Vite -->
     @vite(['resources/css/admin.css', 'resources/js/admin.js'])
+    @vite(['resources/css/utilities.css'])
     <!-- Favicon / Tab Logo -->
     <link rel="icon" type="image/png" href="{{ asset('images/tabBG.png') }}"/>
     <script>
@@ -24,7 +25,7 @@
 
         <!-- Brand -->
         <a class="sidebar-brand" href="{{ route('dashboard') }}">
-            <img src="{{ asset('images/logo.png') }}" alt="Logo SanitaCheck" class="sidebar-brand-logo me-2" style="height: 36px; object-fit: contain;">
+            <img src="{{ asset('images/logo.png') }}" alt="Logo SanitaCheck" class="sidebar-brand-logo me-2">
             <div>
                 <div class="sidebar-brand-name">SanitaCheck</div>
                 <div class="sidebar-brand-sub">Portal Admin</div>
@@ -54,13 +55,17 @@
             </a>
 
             @if(Auth::user()->role === 'admin')
-                <a href="{{ route('admin.index') }}" class="sidebar-link {{ Route::is('admin.*') ? 'active' : '' }}">
-                    <span class="material-symbols-outlined {{ Route::is('admin.*') ? 'filled-icon' : '' }}">admin_panel_settings</span>
+                <a href="{{ route('admin.index') }}" class="sidebar-link {{ Route::is('admin.index') ? 'active' : '' }}">
+                    <span class="material-symbols-outlined {{ Route::is('admin.index') ? 'filled-icon' : '' }}">admin_panel_settings</span>
                     <span>List Admin</span>
                 </a>
                 <a href="{{ route('petugas.index') }}" class="sidebar-link {{ Route::is('petugas.*') ? 'active' : '' }}">
                     <span class="material-symbols-outlined {{ Route::is('petugas.*') ? 'filled-icon' : '' }}">badge</span>
                     <span>List Petugas</span>
+                </a>
+                <a href="{{ route('admin.pantau-petugas') }}" class="sidebar-link {{ Route::is('admin.pantau-petugas') ? 'active' : '' }}">
+                    <span class="material-symbols-outlined {{ Route::is('admin.pantau-petugas') ? 'filled-icon' : '' }}">monitoring</span>
+                    <span>Pantau Petugas</span>
                 </a>
             @endif
 
@@ -68,6 +73,10 @@
                 <a href="{{ route('inspections.index') }}" class="sidebar-link {{ Route::is('inspections.index') ? 'active' : '' }}">
                     <span class="material-symbols-outlined {{ Route::is('inspections.index') ? 'filled-icon' : '' }}">assignment</span>
                     <span>Form Inspeksi</span>
+                </a>
+                <a href="{{ route('petugas.tugas-saya') }}" class="sidebar-link {{ Route::is('petugas.tugas-saya') ? 'active' : '' }}">
+                    <span class="material-symbols-outlined {{ Route::is('petugas.tugas-saya') ? 'filled-icon' : '' }}">task</span>
+                    <span>Tugas Saya</span>
                 </a>
             @endif
 
@@ -84,22 +93,22 @@
                     <span class="material-symbols-outlined">settings</span>
                     <span>Pengaturan</span>
                 </button>
-                <ul class="dropdown-menu dropdown-menu-up shadow-sm border rounded-3" style="min-width:200px;">
+                <ul class="dropdown-menu dropdown-menu-up shadow-sm border rounded-3 min-w-200">
                     <li>
-                        <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="{{ route('settings.profile') }}" style="font-size:0.82rem;">
-                            <span class="material-symbols-outlined" style="font-size:0.95rem;color:#64748b;">person</span> Edit Profil
+                        <a class="dropdown-item d-flex align-items-center gap-2 py-2 fs-9" href="{{ route('settings.profile') }}">
+                            <span class="material-symbols-outlined icon-sm text-slate-500">person</span> Edit Profil
                         </a>
                     </li>
                     @if(Auth::user()->role === 'admin')
                         <li><hr class="dropdown-divider my-1"></li>
                         <li>
-                            <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="{{ route('settings.add-admin') }}" style="font-size:0.82rem;">
-                                <span class="material-symbols-outlined" style="font-size:0.95rem;color:#64748b;">admin_panel_settings</span> Tambah Admin
+                            <a class="dropdown-item d-flex align-items-center gap-2 py-2 fs-9" href="{{ route('settings.add-admin') }}">
+                                <span class="material-symbols-outlined icon-sm text-slate-500">admin_panel_settings</span> Tambah Admin
                             </a>
                         </li>
                         <li>
-                            <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="{{ route('settings.add-petugas') }}" style="font-size:0.82rem;">
-                                <span class="material-symbols-outlined" style="font-size:0.95rem;color:#64748b;">person_add</span> Tambah Petugas
+                            <a class="dropdown-item d-flex align-items-center gap-2 py-2 fs-9" href="{{ route('settings.add-petugas') }}">
+                                <span class="material-symbols-outlined icon-sm text-slate-500">person_add</span> Tambah Petugas
                             </a>
                         </li>
                     @endif
@@ -127,14 +136,14 @@
             <button class="sidebar-toggle" id="sidebarToggle" type="button">
                 <span class="material-symbols-outlined">menu</span>
             </button>
-            <img src="{{ asset('images/logo.png') }}" alt="SanitaCheck" class="d-md-none" style="height:32px;position:absolute;left:50%;transform:translateX(-50%);">
+            <img src="{{ asset('images/logo.png') }}" alt="SanitaCheck" class="d-md-none topbar-logo-mobile">
             <div class="topbar-title d-none d-md-block">
                 <h2>@yield('page-title', 'Dashboard')</h2>
                 <p>@yield('page-subtitle', '')</p>
             </div>
              <div class="topbar-actions">
                 <!-- Dark Mode Toggle -->
-                <button type="button" id="themeToggle" class="topbar-icon-btn border-0" title="Ubah Tema" style="background: var(--adm-bg); cursor: pointer;">
+                <button type="button" id="themeToggle" class="topbar-icon-btn border-0 topbar-icon-btn-custom" title="Ubah Tema">
                     <span class="material-symbols-outlined">dark_mode</span>
                 </button>
 
@@ -144,27 +153,28 @@
                     $unreadCount = auth()->user()->unreadNotifications()->count();
                 @endphp
                 <div class="dropdown">
-                    <div class="topbar-icon-btn" data-bs-toggle="dropdown" aria-expanded="false" style="cursor:pointer;">
+                    <div class="topbar-icon-btn cursor-pointer" data-bs-toggle="dropdown" aria-expanded="false">
                         <span class="material-symbols-outlined">notifications</span>
                         @if($unreadCount > 0)
                             <span class="notif-dot"></span>
                         @endif
                     </div>
-                    <div class="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-2 py-2" style="width: 340px; max-height: 450px; overflow-y: auto;">
+                    <div class="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-2 py-2 notif-dropdown">
                         <div class="d-flex justify-content-between align-items-center px-3 py-1">
-                            <h6 class="dropdown-header p-0 m-0" style="font-weight: 700; color: var(--adm-text); font-size: 0.85rem;">Notifikasi</h6>
+                            <h6 class="dropdown-header p-0 m-0 notif-title">Notifikasi</h6>
                             <div class="d-flex gap-2">
                                 @if($unreadCount > 0)
                                     <form action="{{ route('notifications.read-all') }}" method="POST" class="m-0">
                                         @csrf
-                                        <button type="submit" class="btn p-0 text-primary small" style="font-size: 0.72rem; border: none; background: transparent; font-weight: 600;">
+                                        <button type="submit" class="btn p-0 text-primary small notif-btn">
                                             Tandai dibaca
                                         </button>
                                     </form>
                                 @endif
                                 @if($allNotifications->count() > 0)
-                                    <button type="button" onclick="event.stopPropagation(); document.getElementById('notifForm').submit();" class="btn p-0 text-danger small" style="font-size: 0.72rem; border: none; background: transparent; font-weight: 600;">
-                                        Hapus Terpilih
+                                    <button type="button" id="deleteNotifBtn" class="btn p-0 text-danger small d-inline-flex align-items-center gap-1 notif-btn">
+                                        <span class="material-symbols-outlined icon-sm" id="deleteNotifIcon">delete_sweep</span>
+                                        <span id="deleteNotifText">Hapus Semua</span>
                                     </button>
                                 @endif
                             </div>
@@ -177,33 +187,33 @@
                                 @method('DELETE')
                                 <ul class="list-unstyled m-0 px-2 d-flex flex-column gap-1">
                                     @foreach($allNotifications as $notification)
-                                        <li class="p-2 rounded d-flex align-items-start gap-2 {{ $notification->read_at ? '' : 'bg-light border-start border-3 border-warning' }}" style="transition: background 0.2s;">
-                                            <input type="checkbox" name="notification_ids[]" value="{{ $notification->id }}" class="form-check-input mt-1" style="transform: scale(0.95);">
+                                        <li class="p-2 rounded d-flex align-items-start gap-2 {{ $notification->read_at ? '' : 'bg-light border-start border-3 border-warning' }} transition-bg">
+                                            <input type="checkbox" name="notification_ids[]" value="{{ $notification->id }}" class="form-check-input mt-1 notif-checkbox scale-95">
                                             
                                             <div class="flex-grow-1">
                                                 @if($notification->read_at)
-                                                    <div class="text-start text-wrap text-muted" style="font-size: 0.8rem;">
-                                                        <div class="d-flex justify-content-between align-items-start w-100 gap-2">
-                                                            <span class="fw-bold text-secondary d-flex align-items-center gap-1" style="font-size: 0.78rem;">
-                                                                <span class="material-symbols-outlined text-secondary" style="font-size: 0.95rem;">info</span>
+                                                    <div class="text-start text-wrap text-muted">
+                                                        {{-- TODO: move style --}}<div class="d-flex justify-content-between align-items-start w-100 gap-2">
+                                                            <span class="fw-bold text-secondary d-flex align-items-center gap-1 fs-10">
+                                                                <span class="material-symbols-outlined text-secondary icon-sm">info</span>
                                                                 {{ $notification->data['facility_name'] ?? 'Fasilitas' }}
                                                             </span>
-                                                            <span class="text-muted" style="font-size: 0.65rem;">{{ $notification->created_at->diffForHumans() }}</span>
+                                                            <span class="text-muted notif-time">{{ $notification->created_at->diffForHumans() }}</span>
                                                         </div>
-                                                        <p class="text-muted m-0 mt-1" style="font-size: 0.75rem; line-height: 1.3;">
+                                                        <p class="text-muted m-0 mt-1 notif-msg">
                                                             {{ $notification->data['message'] ?? '' }}
                                                         </p>
                                                     </div>
                                                 @else
-                                                    <button type="button" onclick="event.stopPropagation(); document.getElementById('readForm-{{ $notification->id }}').submit();" class="p-0 border-0 bg-transparent text-start text-wrap w-100" style="font-size: 0.8rem;">
-                                                        <div class="d-flex justify-content-between align-items-start w-100 gap-2">
-                                                            <span class="fw-bold text-dark d-flex align-items-center gap-1" style="font-size: 0.78rem;">
-                                                                <span class="material-symbols-outlined text-warning" style="font-size: 0.95rem;">warning</span>
+                                                    <button type="button" onclick="event.stopPropagation(); document.getElementById('readForm-{{ $notification->id }}').submit();" class="p-0 border-0 bg-transparent text-start text-wrap w-100">
+                                                        {{-- TODO: move style --}}<div class="d-flex justify-content-between align-items-start w-100 gap-2">
+                                                            <span class="fw-bold text-dark d-flex align-items-center gap-1 fs-10">
+                                                                <span class="material-symbols-outlined text-warning icon-sm">warning</span>
                                                                 {{ $notification->data['facility_name'] ?? 'Fasilitas' }}
                                                             </span>
-                                                            <span class="text-muted" style="font-size: 0.65rem;">{{ $notification->created_at->diffForHumans() }}</span>
+                                                            <span class="text-muted notif-time">{{ $notification->created_at->diffForHumans() }}</span>
                                                         </div>
-                                                        <p class="text-dark m-0 mt-1" style="font-size: 0.75rem; line-height: 1.3; font-weight: 500;">
+                                                        <p class="text-dark m-0 mt-1 notif-msg-unread">
                                                             {{ $notification->data['message'] ?? '' }}
                                                         </p>
                                                     </button>
@@ -217,13 +227,14 @@
                             <!-- Hidden forms for single read actions -->
                             @foreach($allNotifications as $notification)
                                 @if(!$notification->read_at)
-                                    <form id="readForm-{{ $notification->id }}" action="{{ route('notifications.read', $notification->id) }}" method="POST" style="display:none;">
+                                    <form id="readForm-{{ $notification->id }}" action="{{ route('notifications.read', $notification->id) }}" method="POST">
+                                        {{-- TODO: move style --}}
                                         @csrf
                                     </form>
                                 @endif
                             @endforeach
                         @else
-                            <div class="text-center text-muted py-3" style="font-size: 0.82rem;">Tidak ada notifikasi baru</div>
+                            <div class="text-center text-muted py-3 fs-9">Tidak ada notifikasi baru</div>
                         @endif
                     </div>
                 </div>
@@ -242,7 +253,7 @@
             <!-- Flash Messages -->
             @if(session('success'))
                 <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
-                    <span class="material-symbols-outlined align-middle me-1" style="font-size:1rem;">check_circle</span>
+                    <span class="material-symbols-outlined align-middle me-1 icon-md">check_circle</span>
                     <strong>Sukses!</strong> {{ session('success') }}
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
@@ -252,7 +263,7 @@
 
             @if($errors->any())
                 <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
-                    <span class="material-symbols-outlined align-middle me-1" style="font-size:1rem;">error</span>
+                    <span class="material-symbols-outlined align-middle me-1 icon-md">error</span>
                     <strong>Error!</strong>
                     <ul class="mb-0 mt-1 small ps-3">
                         @foreach($errors->all() as $error)

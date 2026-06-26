@@ -50,7 +50,7 @@
     <!-- Compliance Checklist -->
     <div class="form-card mb-3">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h5 style="font-size:0.95rem;font-weight:700;color:#0f172a;margin:0;">Daftar Periksa Kepatuhan</h5>
+            <h5 class="fw-bold text-slate-900 m-0 fs-095"> Daftar Periksa Kepatuhan</h5>
         </div>
 
         <!-- Overall Cleanliness -->
@@ -64,7 +64,7 @@
                             <h6>Sangat Baik</h6>
                             <p>Sangat bersih & wangi</p>
                         </div>
-                        <span class="material-symbols-outlined" style="color:#1a56db;font-size:1.2rem;">check_circle</span>
+                        <span class="material-symbols-outlined text-blue-primary icon-xl">check_circle</span>
                     </label>
                 </div>
                     <div class="col-md-4 radio-option">
@@ -74,7 +74,7 @@
                                 <h6>Cukup Baik</h6>
                                 <p>Cukup bersih & terawat</p>
                             </div>
-                            <span class="material-symbols-outlined" style="color:#94a3b8;font-size:1.2rem;">radio_button_unchecked</span>
+                            <span class="material-symbols-outlined text-slate-400 icon-xl">radio_button_unchecked</span>
                         </label>
                     </div>
                     <div class="col-md-4 radio-option">
@@ -84,7 +84,7 @@
                                 <h6>Kurang Layak</h6>
                                 <p>Kotor & perlu tindakan</p>
                             </div>
-                            <span class="material-symbols-outlined" style="color:#94a3b8;font-size:1.2rem;">radio_button_unchecked</span>
+                            <span class="material-symbols-outlined text-slate-400 icon-xl">radio_button_unchecked</span>
                         </label>
                     </div>
                 </div>
@@ -93,15 +93,15 @@
                 @enderror
             </div>
 
-        <hr style="border-color:#f1f5f9;margin:1.25rem 0;">
+        <hr class="hr-light">
 
         <!-- Water & Soap -->
         <div class="row g-3 mb-4">
             <div class="col-md-6">
                 <div class="toggle-row">
                     <div class="d-flex align-items-center gap-3">
-                        <div class="toggle-icon" style="background:#eff6ff;">
-                            <span class="material-symbols-outlined" style="color:#1a56db;font-size:1.1rem;">water_drop</span>
+                        <div class="toggle-icon bg-blue-50">
+                            <span class="material-symbols-outlined text-blue-primary icon-lg">water_drop</span>
                         </div>
                         <div>
                             <h6>Ketersediaan Air</h6>
@@ -110,9 +110,9 @@
                     </div>
                     <div class="btn-group">
                         <input type="radio" class="btn-check" name="ketersediaan_air" id="water_yes" value="tersedia" {{ old('ketersediaan_air') !== 'tidak' ? 'checked' : '' }}>
-                        <label class="btn btn-outline-primary btn-sm" for="water_yes" style="border-radius:6px 0 0 6px;">Ya</label>
+                        <label class="btn btn-outline-primary btn-sm rounded-left-6" for="water_yes">Ya</label>
                         <input type="radio" class="btn-check" name="ketersediaan_air" id="water_no" value="tidak" {{ old('ketersediaan_air') === 'tidak' ? 'checked' : '' }}>
-                        <label class="btn btn-outline-primary btn-sm" for="water_no" style="border-radius:0 6px 6px 0;">Tidak</label>
+                        <label class="btn btn-outline-primary btn-sm rounded-right-6" for="water_no">Tidak</label>
                     </div>
                     @error('ketersediaan_air')
                         <div class="invalid-feedback d-block">{{ $message }}</div>
@@ -122,8 +122,8 @@
             <div class="col-md-6">
                 <div class="toggle-row">
                     <div class="d-flex align-items-center gap-3">
-                        <div class="toggle-icon" style="background:#f0fdf4;">
-                            <span class="material-symbols-outlined" style="color:#16a34a;font-size:1.1rem;">soap</span>
+                        <div class="toggle-icon bg-green-50">
+                            <span class="material-symbols-outlined text-green-primary icon-lg">soap</span>
                         </div>
                         <div>
                             <h6>Ketersediaan Sabun</h6>
@@ -132,9 +132,9 @@
                     </div>
                     <div class="btn-group">
                         <input type="radio" class="btn-check" name="ketersediaan_sabun" id="soap_yes" value="tersedia" {{ old('ketersediaan_sabun') !== 'tidak' ? 'checked' : '' }}>
-                        <label class="btn btn-outline-primary btn-sm" for="soap_yes" style="border-radius:6px 0 0 6px;">Ya</label>
+                        <label class="btn btn-outline-primary btn-sm rounded-left-6" for="soap_yes">Ya</label>
                         <input type="radio" class="btn-check" name="ketersediaan_sabun" id="soap_no" value="tidak" {{ old('ketersediaan_sabun') === 'tidak' ? 'checked' : '' }}>
-                        <label class="btn btn-outline-primary btn-sm" for="soap_no" style="border-radius:0 6px 6px 0;">Tidak</label>
+                        <label class="btn btn-outline-primary btn-sm rounded-right-6" for="soap_no">Tidak</label>
                     </div>
                     @error('ketersediaan_sabun')
                         <div class="invalid-feedback d-block">{{ $message }}</div>
@@ -143,13 +143,13 @@
             </div>
         </div>
 
-        <hr style="border-color:#f1f5f9;margin:1.25rem 0;">
+        <hr class="hr-light">
 
         <!-- Odor Detection -->
         <div class="toggle-row mb-4">
             <div class="d-flex align-items-center gap-3">
-                <div class="toggle-icon" style="background:#f0fdf4;">
-                    <span class="material-symbols-outlined" style="color:#16a34a;font-size:1.1rem;">wind_power</span>
+                <div class="toggle-icon bg-green-50">
+                    <span class="material-symbols-outlined text-green-primary icon-lg">wind_power</span>
                 </div>
                 <div>
                     <h6>Bau Tidak Sedap Terdeteksi?</h6>
@@ -157,11 +157,11 @@
                 </div>
             </div>
             <div class="d-flex align-items-center gap-2">
-                <span style="font-size:0.72rem;font-weight:700;color:#64748b;">TIDAK</span>
+                <span class="fs-12 fw-bold text-slate-500">TIDAK</span>
                 <div class="form-check form-switch p-0 m-0">
                     <input class="form-check-input ms-0" type="checkbox" id="odorSwitch"/>
                 </div>
-                <span style="font-size:0.72rem;font-weight:700;color:#1a56db;">YA</span>
+                <span class="fs-12 fw-bold text-blue-primary">YA</span>
             </div>
             <input type="hidden" name="bau_tidak_sedap" id="bau_tidak_sedap_val" value="tidak"/>
         </div>
@@ -177,10 +177,10 @@
         </div>
 
         <!-- Kategori Tindak Lanjut (Dinamis & Read-only) -->
-        <div class="toggle-row flex-column align-items-stretch" style="display:block;">
+        <div class="toggle-row flex-column align-items-stretch d-block">
             <div class="d-flex align-items-center gap-3">
-                <div class="toggle-icon" style="background:#fefce8;">
-                    <span class="material-symbols-outlined" style="color:#ca8a04;font-size:1.1rem;">notifications_active</span>
+                <div class="toggle-icon bg-yellow-50">
+                    <span class="material-symbols-outlined text-yellow-primary icon-lg">notifications_active</span>
                 </div>
                 <div class="w-100">
                     <label class="form-label-admin mb-1">Kategori Tindak Lanjut</label>
@@ -202,7 +202,7 @@
         @error('foto_after')
             <div class="invalid-feedback d-block">{{ $message }}</div>
         @enderror
-        <p class="text-muted small mt-1 mb-0" style="font-size:0.75rem;">Unggah dokumentasi kondisi terkini fasilitas pelayanan setelah dilakukan inspeksi/pembersihan.</p>
+        <p class="text-muted small mt-1 mb-0 fs-11">Unggah dokumentasi kondisi terkini fasilitas pelayanan setelah dilakukan inspeksi/pembersihan.</p>
     </div>
 
     <!-- Guidelines -->
@@ -216,11 +216,11 @@
 
     <!-- Form Actions -->
     <div class="d-flex justify-content-end gap-2 mb-4">
-        <a href="{{ route('dashboard') }}" class="btn btn-sm btn-light border px-4" style="font-size:0.84rem;font-weight:600;border-radius:8px;">
+        <a href="{{ route('dashboard') }}" class="btn btn-sm btn-light border px-4 fs-8 fw-semibold rounded-8">
             Batal
         </a>
-        <button type="submit" class="btn btn-primary btn-sm d-flex align-items-center gap-1 px-4" style="font-size:0.84rem;font-weight:700;border-radius:8px;">
-            <span class="material-symbols-outlined" style="font-size:0.95rem;">check_circle</span>
+        <button type="submit" class="btn btn-primary btn-sm d-flex align-items-center gap-1 px-4 fs-8 fw-bold rounded-8">
+            <span class="material-symbols-outlined icon-sm">check_circle</span>
             Kirim Hasil Inspeksi
         </button>
     </div>
