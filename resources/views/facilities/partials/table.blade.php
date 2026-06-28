@@ -19,6 +19,16 @@
                         ? $latestInspection->tanggal_inspeksi->format('d M Y')
                         : 'Belum pernah';
                     $status = $facility->cleanliness_status;
+                    $_editPayload = [
+                        'id' => $facility->id,
+                        'nama_fasilitas' => $facility->nama_fasilitas,
+                        'jenis_fasilitas' => $facility->jenis_fasilitas,
+                        'penanggung_jawab' => $facility->penanggung_jawab,
+                        'petugas_id' => $facility->penanggung_jawab,
+                        'petugas_tambahan_ids' => $facility->petugasTambahan->pluck('id'),
+                        'lokasi' => $facility->lokasi,
+                        'status_aktif' => $facility->status_aktif,
+                    ];
                 @endphp
                 <tr>
                     <td>
@@ -64,7 +74,7 @@
                         @elseif($status === 'belum_inspeksi')
                             <span class="badge-status bg-adm text-slate-500">Belum Inspeksi</span>
                         @else
-                            <span class="badge-status badge-critical">Perlu Perbaikan</span>
+                            <span class="badge-status badge-critical">Perlu Diperbaiki</span>
                         @endif
                     </td>
                     @if (Auth::user()->role === 'admin')
@@ -75,17 +85,8 @@
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-end rounded-3 border shadow-sm min-w-160">
                                     <li>
-                                        <button class="dropdown-item d-flex align-items-center gap-2 py-2 fs-9"
-                                            onclick='openEditModal({!! json_encode([
-                                                'id' => $facility->id,
-                                                'nama_fasilitas' => $facility->nama_fasilitas,
-                                                'jenis_fasilitas' => $facility->jenis_fasilitas,
-                                                'penanggung_jawab' => $facility->penanggung_jawab,
-                                                'petugas_id' => $facility->penanggung_jawab,
-                                                'petugas_tambahan_ids' => $facility->petugasTambahan->pluck('id'),
-                                                'lokasi' => $facility->lokasi,
-                                                'status_aktif' => $facility->status_aktif,
-                                            ]) !!})'>
+                                        <button class="dropdown-item d-flex align-items-center gap-2 py-2 fs-9 btn-edit-facility"
+                                            data-facility='@json($_editPayload)'>
                                             <span class="material-symbols-outlined icon-sm text-slate-500">edit</span> Ubah Fasilitas
                                         </button>
                                     </li>

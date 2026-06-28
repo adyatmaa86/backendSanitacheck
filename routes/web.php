@@ -10,11 +10,12 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PetugasController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\TaskMonitoringController;
+use App\Http\Controllers\LaporanController;
 
 
 // Auth Routes
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
+Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:10,1');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Root redirect
@@ -41,6 +42,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/inspections', [InspeksiController::class, 'index'])->name('inspections.index');
     Route::get('/history', [InspeksiController::class, 'history'])->name('inspections.history');
     Route::post('/inspections', [InspeksiController::class, 'store'])->name('inspections.store');
+    Route::get('/inspections/{id}/edit', [InspeksiController::class, 'edit'])->name('inspections.edit')->whereNumber('id');
+    Route::put('/inspections/{id}', [InspeksiController::class, 'update'])->name('inspections.update')->whereNumber('id');
     Route::delete('/inspections/destroy-all', [InspeksiController::class, 'destroyAll'])->name('inspections.destroy-all');
     Route::delete('/inspections/{id}', [InspeksiController::class, 'destroy'])->name('inspections.destroy');
 
@@ -70,6 +73,16 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/pantau-petugas', [TaskMonitoringController::class, 'pantauPetugas'])->name('admin.pantau-petugas');
     Route::get('/tugas-saya', [TaskMonitoringController::class, 'tugasSaya'])->name('petugas.tugas-saya');
     Route::post('/tugas-saya/complete/{id}', [TaskMonitoringController::class, 'completeTask'])->name('petugas.complete-task');
+
+    // Laporan Masuk (Admin & Petugas)
+    Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
+    Route::get('/laporan/{id}', [LaporanController::class, 'show'])->name('laporan.show')->whereNumber('id');
+    Route::post('/laporan/{id}/kirim', [LaporanController::class, 'kirimKePetugas'])->name('laporan.kirim')->whereNumber('id');
+    Route::delete('/laporan/{id}', [LaporanController::class, 'destroy'])->name('laporan.destroy')->whereNumber('id');
+
+    // Petugas - Terima Laporan
+    Route::get('/terima-laporan', [LaporanController::class, 'petugasLaporan'])->name('petugas.terima-laporan');
+    Route::post('/terima-laporan/{id}', [LaporanController::class, 'terimaLaporan'])->name('petugas.terima-laporan.proses')->whereNumber('id');
 });
 
 

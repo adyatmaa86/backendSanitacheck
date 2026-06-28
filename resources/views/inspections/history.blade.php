@@ -62,7 +62,7 @@
 </div>
 
 <!-- History Table -->
-<div class="data-card">
+<div class="data-card" id="history-data" data-token="{{ csrf_token() }}">
     @include('inspections.partials.history-table')
 </div>
 

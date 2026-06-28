@@ -17,10 +17,10 @@
 <body>
     <div class="d-flex align-items-center justify-content-center p-3 p-sm-4 position-relative w-100 h-100 overflow-hidden">
         <!-- Decorative Blurs -->
-        <div class="position-absolute bg-primary bg-opacity-10 rounded-circle d-none d-sm-block" style="width: 320px; height: 320px; top: -100px; right: -100px; filter: blur(80px); z-index: 1; pointer-events: none;"></div>
-        <div class="position-absolute bg-primary bg-opacity-10 rounded-circle d-sm-none" style="width: 180px; height: 180px; top: -60px; right: -60px; filter: blur(60px); z-index: 1; pointer-events: none;"></div>
-        <div class="position-absolute bg-success bg-opacity-10 rounded-circle d-none d-sm-block" style="width: 260px; height: 260px; bottom: -80px; left: -80px; filter: blur(80px); z-index: 1; pointer-events: none;"></div>
-        <div class="position-absolute bg-success bg-opacity-10 rounded-circle d-sm-none" style="width: 160px; height: 160px; bottom: -50px; left: -50px; filter: blur(60px); z-index: 1; pointer-events: none;"></div>
+        <div class="login-blob-primary d-none d-sm-block"></div>
+        <div class="login-blob-primary-sm d-sm-none"></div>
+        <div class="login-blob-success d-none d-sm-block"></div>
+        <div class="login-blob-success-sm d-sm-none"></div>
 
         <div class="w-100 glass-card login-card p-4 p-sm-5 shadow-lg position-relative">
         <div class="text-center mb-4">

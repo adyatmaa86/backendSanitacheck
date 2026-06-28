@@ -75,7 +75,4 @@
     @include('admin.partials.pantau-table')
 </div>
 
-@push('scripts')
-<script>initPantauFilter();</script>
-@endpush
 @endsection

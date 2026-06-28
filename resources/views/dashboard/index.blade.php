@@ -138,7 +138,7 @@
             <h5 class="chart-title mb-4">Distribusi Status</h5>
 
             <div class="donut-wrap">
-                <svg viewBox="0 0 36 36" style="transform:rotate(-90deg);width:100%;height:100%;">
+                <svg viewBox="0 0 36 36" class="donut-svg">
                     <circle cx="18" cy="18" r="15.9" fill="transparent" stroke="#f1f5f9" stroke-width="3.5"/>
                     <circle cx="18" cy="18" r="15.9" fill="transparent" stroke="#22c55e"
                         stroke-dasharray="{{ $compPercent }} 100"

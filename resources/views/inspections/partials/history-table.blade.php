@@ -9,9 +9,7 @@
                 <th>Indikator</th>
                 <th>Catatan</th>
                 <th>Tindak Lanjut</th>
-                @if(Auth::user()->role === 'admin')
-                    <th>Aksi</th>
-                @endif
+                <th>Aksi</th>
             </tr>
         </thead>
         <tbody>
@@ -42,15 +40,15 @@
                     <td>
                         <div class="d-flex flex-column gap-1 fs-12">
                             <div class="d-flex align-items-center gap-1">
-                                <span class="indicator-dot" style="background:{{ $ins->ketersediaan_air === 'tersedia' ? '#22c55e' : '#ef4444' }};"></span>
+                                <span class="indicator-dot {{ $ins->ketersediaan_air === 'tersedia' ? 'indicator-dot-success' : 'indicator-dot-danger' }}"></span>
                                 <span class="text-slate-500">Air: {{ ucfirst($ins->ketersediaan_air) }}</span>
                             </div>
                             <div class="d-flex align-items-center gap-1">
-                                <span class="indicator-dot" style="background:{{ $ins->ketersediaan_sabun === 'tersedia' ? '#22c55e' : '#ef4444' }};"></span>
+                                <span class="indicator-dot {{ $ins->ketersediaan_sabun === 'tersedia' ? 'indicator-dot-success' : 'indicator-dot-danger' }}"></span>
                                 <span class="text-slate-500">Sabun: {{ ucfirst($ins->ketersediaan_sabun) }}</span>
                             </div>
                             <div class="d-flex align-items-center gap-1">
-                                <span class="indicator-dot" style="background:{{ $ins->bau_tidak_sedap === 'tidak' ? '#22c55e' : '#ef4444' }};"></span>
+                                <span class="indicator-dot {{ $ins->bau_tidak_sedap === 'tidak' ? 'indicator-dot-success' : 'indicator-dot-danger' }}"></span>
                                 <span class="text-slate-500">Bau Tidak Sedap: {{ $ins->bau_tidak_sedap === 'ya' ? 'Ya' : 'Tidak' }}</span>
                             </div>
                         </div>
@@ -76,11 +74,19 @@
                                 </button>
                             </form>
                         </td>
+                    @else
+                        <td>
+                            <button type="button" class="btn-icon warning edit-inspeksi-btn"
+                                data-id="{{ $ins->id }}"
+                                title="Edit">
+                                <span class="material-symbols-outlined text-yellow-primary">edit</span>
+                            </button>
+                        </td>
                     @endif
                 </tr>
             @empty
                 <tr class="empty-table">
-                    <td colspan="{{ Auth::user()->role === 'admin' ? 8 : 7 }}">
+                    <td colspan="8">
                         <span class="material-symbols-outlined d-block mb-2 icon-2xl">history</span>
                         Belum ada laporan inspeksi.
                     </td>
@@ -89,7 +95,7 @@
             @if(count($inspections) > 0)
                 @for ($i = count($inspections); $i < 5; $i++)
                     <tr class="empty-row">
-                        <td colspan="{{ Auth::user()->role === 'admin' ? 8 : 7 }}" class="border-0"> &nbsp;</td>
+                        <td colspan="8" class="border-0"> &nbsp;</td>
                     </tr>
                 @endfor
             @endif

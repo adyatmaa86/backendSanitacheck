@@ -61,6 +61,42 @@ document.addEventListener('DOMContentLoaded', function() {
     bindPagination();
 });
 
+let _allPetugas = [];
+(function() {
+    const el = document.getElementById('facilities-data');
+    if (el && el.dataset.petugas) {
+        try { _allPetugas = JSON.parse(el.dataset.petugas); } catch(e) {}
+    }
+})();
+
+/* ---- Event listeners (replaces inline onclick) ---- */
+document.addEventListener('DOMContentLoaded', function() {
+    // Jenis toggle edit
+    document.addEventListener('click', function(e) {
+        const btn = e.target.closest('.btn-toggle-edit-jenis');
+        if (btn) toggleEditJenis(parseInt(btn.dataset.id));
+    });
+    document.addEventListener('click', function(e) {
+        const btn = e.target.closest('.btn-save-jenis');
+        if (btn) {
+            const form = document.getElementById('form-edit-jenis-' + btn.dataset.id);
+            if (form) form.submit();
+        }
+    });
+    document.addEventListener('click', function(e) {
+        const btn = e.target.closest('.btn-cancel-jenis');
+        if (btn) toggleEditJenis(parseInt(btn.dataset.id), true);
+    });
+
+    // Facility edit button
+    document.addEventListener('click', function(e) {
+        const btn = e.target.closest('.btn-edit-facility');
+        if (btn && btn.dataset.facility) {
+            try { window.openEditModal(JSON.parse(btn.dataset.facility)); } catch(err) {}
+        }
+    });
+});
+
 // Global functions for inline click handlers
 window.openEditModal = function(facility) {
     const formEl = document.getElementById('edit-facility-form');
@@ -147,7 +183,7 @@ window.initPetugasTambahan = function(prefix, selectedIds = []) {
     function renderChips() {
         chipsContainer.innerHTML = '';
         selected.forEach(function(id) {
-            const petugas = (window._allPetugas || []).find(p => p.id === id);
+            const petugas = (_allPetugas || []).find(p => p.id === id);
             if (!petugas) return;
             const chip = document.createElement('span');
             chip.className = 'd-inline-flex align-items-center gap-1 px-2 py-1 rounded-2';
@@ -168,7 +204,7 @@ window.initPetugasTambahan = function(prefix, selectedIds = []) {
     function buildDropdownItems() {
         const pjId = getPjId();
         dropdown.innerHTML = '';
-        const available = (window._allPetugas || []).filter(p => p.id !== pjId && !selected.includes(p.id));
+        const available = (_allPetugas || []).filter(p => p.id !== pjId && !selected.includes(p.id));
         if (available.length === 0) {
             dropdown.innerHTML = '<div class="px-3 py-2 text-muted" style="font-size:0.78rem;">Semua petugas sudah ditambahkan</div>';
             return;

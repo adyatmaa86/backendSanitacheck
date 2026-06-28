@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Inspeksi;
+use App\Models\Laporan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class TaskMonitoringController extends Controller
 {
@@ -31,7 +34,7 @@ class TaskMonitoringController extends Controller
 
         // Map all current active inspections to each petugas
         foreach ($petugas as $p) {
-            $p->active_inspections = \App\Models\Inspeksi::with('facility')
+            $p->active_inspections = Inspeksi::with('facility')
                 ->where('petugas_id', $p->id)
                 ->where('is_completed', false)
                 ->orderBy('tanggal_inspeksi', 'desc')
@@ -55,7 +58,7 @@ class TaskMonitoringController extends Controller
         }
 
         $petugas = Auth::user();
-        $activeInspections = \App\Models\Inspeksi::with('facility')
+        $activeInspections = Inspeksi::with('facility', 'laporan')
             ->where('petugas_id', $petugas->id)
             ->where('is_completed', false)
             ->orderBy('tanggal_inspeksi', 'desc')
@@ -81,7 +84,7 @@ class TaskMonitoringController extends Controller
             'catatan'           => 'nullable|string|max:1000',
         ]);
 
-        $inspection = \App\Models\Inspeksi::where('petugas_id', Auth::id())
+        $inspection = Inspeksi::where('petugas_id', Auth::id())
             ->where('is_completed', false)
             ->findOrFail($id);
 
@@ -90,21 +93,21 @@ class TaskMonitoringController extends Controller
 
         if ($request->hasFile('foto_after')) {
             if ($facility->foto_after) {
-                $isUsed = \App\Models\Inspeksi::where('foto', $facility->foto_after)
+                $isUsed = Inspeksi::where('foto', $facility->foto_after)
                     ->orWhere('foto_selesai', $facility->foto_after)
                     ->exists();
                 if (!$isUsed) {
-                    \Illuminate\Support\Facades\Storage::disk('public')->delete($facility->foto_after);
+                    Storage::disk('public')->delete($facility->foto_after);
                 }
             }
             if ($facility->foto_before) {
-                $isUsed = \App\Models\Inspeksi::where('id', '!=', $inspection->id)
+                $isUsed = Inspeksi::where('id', '!=', $inspection->id)
                     ->where(function($q) use ($facility) {
                         $q->where('foto', $facility->foto_before)
                           ->orWhere('foto_selesai', $facility->foto_before);
                     })->exists();
                 if (!$isUsed) {
-                    \Illuminate\Support\Facades\Storage::disk('public')->delete($facility->foto_before);
+                    Storage::disk('public')->delete($facility->foto_before);
                 }
             }
             $fotoSelesaiPath = $request->file('foto_after')->store('facilities', 'public');
@@ -114,34 +117,38 @@ class TaskMonitoringController extends Controller
             ]);
         }
 
-        // Delete the original dirty photo from storage since task is resolved
         if ($inspection->foto) {
-            $isUsed = \App\Models\Inspeksi::where('id', '!=', $inspection->id)
+            $isUsed = Inspeksi::where('id', '!=', $inspection->id)
                 ->where(function($q) use ($inspection) {
                     $q->where('foto', $inspection->foto)
                       ->orWhere('foto_selesai', $inspection->foto);
                 })->exists();
             if (!$isUsed) {
-                \Illuminate\Support\Facades\Storage::disk('public')->delete($inspection->foto);
+                Storage::disk('public')->delete($inspection->foto);
             }
         }
 
-        // Mark this specific inspection as completed and update status
         $inspection->update([
-            'is_completed'       => true,
+            'is_completed'        => true,
             'status_tindak_lanjut' => 'aman',
-            'kondisi_kebersihan' => 'baik',
-            'ketersediaan_air'   => $request->ketersediaan_air,
-            'ketersediaan_sabun' => $request->ketersediaan_sabun,
-            'bau_tidak_sedap'    => $request->bau_tidak_sedap,
-            'catatan'            => $request->catatan,
-            'foto'               => null,
-            'foto_selesai'       => $fotoSelesaiPath,
-            'tanggal_inspeksi'   => now(),
+            'kondisi_kebersihan'  => 'baik',
+            'ketersediaan_air'    => $request->ketersediaan_air,
+            'ketersediaan_sabun'  => $request->ketersediaan_sabun,
+            'bau_tidak_sedap'     => $request->bau_tidak_sedap,
+            'catatan'             => $request->catatan,
+            'foto'                => null,
+            'foto_selesai'        => $fotoSelesaiPath,
+            'tanggal_inspeksi'    => now(),
         ]);
 
-        // Check if there are other uncompleted tasks for this officer
-        $hasMoreTasks = \App\Models\Inspeksi::where('petugas_id', Auth::id())
+        // If this inspection came from a laporan, mark laporan as selesai
+        if ($inspection->laporan_id) {
+            Laporan::where('id', $inspection->laporan_id)
+                ->where('status', 'diproses')
+                ->update(['status' => 'selesai']);
+        }
+
+        $hasMoreTasks = Inspeksi::where('petugas_id', Auth::id())
             ->where('is_completed', false)
             ->exists();
 
@@ -149,6 +156,7 @@ class TaskMonitoringController extends Controller
             Auth::user()->update(['status_pengerjaan' => 'ready']);
         }
 
-        return redirect()->route('petugas.tugas-saya')->with('success', 'Tugas pada fasilitas ' . $inspection->facility->nama_fasilitas . ' berhasil diselesaikan.');
+        return redirect()->route('petugas.tugas-saya')
+            ->with('success', 'Tugas pada fasilitas ' . $inspection->facility->nama_fasilitas . ' berhasil diselesaikan.');
     }
 }

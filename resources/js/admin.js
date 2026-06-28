@@ -4,6 +4,7 @@
    ============================================= */
 
 import Swal from 'sweetalert2';
+window.Swal = Swal;
 
 const swalStyle = document.createElement('style');
 swalStyle.textContent = '[data-theme="dark"] .swal2-cancel { color: #fff !important; }';
@@ -136,6 +137,22 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 
+    /* ---- 10.4 NOTIFICATION DROPDOWN — STOP PROPAGATION & READ ---- */
+    const notifForm = document.querySelector('.notif-form');
+    if (notifForm) {
+        notifForm.addEventListener('click', function(e) {
+            if (!e.target.closest('.notif-read-btn')) e.stopPropagation();
+        });
+    }
+    document.addEventListener('click', function(e) {
+        const btn = e.target.closest('.notif-read-btn');
+        if (btn && btn.dataset.id) {
+            e.stopPropagation();
+            const form = document.getElementById('readForm-' + btn.dataset.id);
+            if (form) form.submit();
+        }
+    });
+
     /* ---- 10.5 NOTIFICATION DROPDOWN — DELETE BUTTON ---- */
     const notifCheckboxes = document.querySelectorAll('.notif-checkbox');
     const deleteNotifBtn = document.getElementById('deleteNotifBtn');
@@ -220,7 +237,7 @@ window.addEventListener('pageshow', function (event) {
 });
 
 /* ---- 13. PANTAU PETUGAS — AJAX SEARCH & PAGINATION ---- */
-window.initPantauFilter = function() {
+window.initPantauFilter = (function() {
     const form = document.getElementById('filterForm');
     const searchInput = document.getElementById('searchInput');
     const tableContainer = document.getElementById('tableContainer');
@@ -262,4 +279,5 @@ window.initPantauFilter = function() {
         });
     }
     bindPagination();
-};
+    return { fetchPetugas };
+})();

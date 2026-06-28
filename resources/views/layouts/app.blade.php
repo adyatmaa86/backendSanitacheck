@@ -70,6 +70,10 @@
             @endif
 
             @if(Auth::user()->role === 'petugas')
+                <a href="{{ route('petugas.terima-laporan') }}" class="sidebar-link {{ Route::is('petugas.terima-laporan') ? 'active' : '' }}">
+                    <span class="material-symbols-outlined {{ Route::is('petugas.terima-laporan') ? 'filled-icon' : '' }}">assignment_returned</span>
+                    <span>Terima Laporan</span>
+                </a>
                 <a href="{{ route('inspections.index') }}" class="sidebar-link {{ Route::is('inspections.index') ? 'active' : '' }}">
                     <span class="material-symbols-outlined {{ Route::is('inspections.index') ? 'filled-icon' : '' }}">assignment</span>
                     <span>Form Inspeksi</span>
@@ -82,8 +86,21 @@
 
             <a href="{{ route('inspections.history') }}" class="sidebar-link {{ Route::is('inspections.history') ? 'active' : '' }}">
                 <span class="material-symbols-outlined {{ Route::is('inspections.history') ? 'filled-icon' : '' }}">history</span>
-                <span>Riwayat Laporan</span>
+                <span>Riwayat Inspeksi</span>
             </a>
+
+            @if(Auth::user()->role === 'admin')
+                @php
+                    $pendingLaporanCount = \App\Models\Laporan::where('status', 'pending')->count();
+                @endphp
+                <a href="{{ route('laporan.index') }}" class="sidebar-link {{ Route::is('laporan.*') ? 'active' : '' }}">
+                    <span class="material-symbols-outlined {{ Route::is('laporan.*') ? 'filled-icon' : '' }}">inbox</span>
+                    <span>Laporan Masuk</span>
+                    @if($pendingLaporanCount > 0)
+                        <span class="sidebar-count-badge ms-auto bg-yellow-100 text-yellow-darker">{{ $pendingLaporanCount }}</span>
+                    @endif
+                </a>
+            @endif
         </nav>
 
         <!-- Sidebar Footer -->
@@ -182,7 +199,7 @@
                         <hr class="dropdown-divider my-2">
                         
                         @if($allNotifications->count() > 0)
-                            <form id="notifForm" action="{{ route('notifications.bulk-delete') }}" method="POST" class="m-0" onclick="event.stopPropagation();">
+                            <form id="notifForm" action="{{ route('notifications.bulk-delete') }}" method="POST" class="m-0 notif-form">
                                 @csrf
                                 @method('DELETE')
                                 <ul class="list-unstyled m-0 px-2 d-flex flex-column gap-1">
@@ -193,7 +210,7 @@
                                             <div class="flex-grow-1">
                                                 @if($notification->read_at)
                                                     <div class="text-start text-wrap text-muted">
-                                                        {{-- TODO: move style --}}<div class="d-flex justify-content-between align-items-start w-100 gap-2">
+                                                        <div class="d-flex justify-content-between align-items-start w-100 gap-2">
                                                             <span class="fw-bold text-secondary d-flex align-items-center gap-1 fs-10">
                                                                 <span class="material-symbols-outlined text-secondary icon-sm">info</span>
                                                                 {{ $notification->data['facility_name'] ?? 'Fasilitas' }}
@@ -205,8 +222,8 @@
                                                         </p>
                                                     </div>
                                                 @else
-                                                    <button type="button" onclick="event.stopPropagation(); document.getElementById('readForm-{{ $notification->id }}').submit();" class="p-0 border-0 bg-transparent text-start text-wrap w-100">
-                                                        {{-- TODO: move style --}}<div class="d-flex justify-content-between align-items-start w-100 gap-2">
+                                                    <button type="button" class="p-0 border-0 bg-transparent text-start text-wrap w-100 notif-read-btn" data-id="{{ $notification->id }}">
+                                                        <div class="d-flex justify-content-between align-items-start w-100 gap-2">
                                                             <span class="fw-bold text-dark d-flex align-items-center gap-1 fs-10">
                                                                 <span class="material-symbols-outlined text-warning icon-sm">warning</span>
                                                                 {{ $notification->data['facility_name'] ?? 'Fasilitas' }}
@@ -228,7 +245,6 @@
                             @foreach($allNotifications as $notification)
                                 @if(!$notification->read_at)
                                     <form id="readForm-{{ $notification->id }}" action="{{ route('notifications.read', $notification->id) }}" method="POST">
-                                        {{-- TODO: move style --}}
                                         @csrf
                                     </form>
                                 @endif

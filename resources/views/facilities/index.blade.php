@@ -338,9 +338,9 @@
                                     <td><code>{{ $jf->slug }}</code></td>
                                     <td>
                                         <div class="d-flex gap-1">
-                                            <button type="button" id="btn-edit-jenis-{{ $jf->id }}" onclick="toggleEditJenis({{ $jf->id }})" class="btn btn-sm btn-outline-secondary py-0 px-2 fs-12">Ubah</button>
-                                            <button type="button" id="btn-save-jenis-{{ $jf->id }}" onclick="document.getElementById('form-edit-jenis-{{ $jf->id }}').submit()" class="btn btn-sm btn-success py-0 px-2 d-none fs-12">Simpan</button>
-                                            <button type="button" id="btn-cancel-jenis-{{ $jf->id }}" onclick="toggleEditJenis({{ $jf->id }}, true)" class="btn btn-sm btn-light py-0 px-2 d-none fs-12">Batal</button>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary inline-edit-btn btn-toggle-edit-jenis" data-id="{{ $jf->id }}" data-action="edit">Ubah</button>
+                                            <button type="button" class="btn btn-sm btn-success inline-edit-btn d-none btn-save-jenis" data-id="{{ $jf->id }}">Simpan</button>
+                                            <button type="button" class="btn btn-sm btn-light inline-edit-btn d-none btn-cancel-jenis" data-id="{{ $jf->id }}">Batal</button>
                                             
                                             <form action="{{ route('jenis-fasilitas.destroy', $jf->id) }}" method="POST" class="delete-form m-0" data-title="Hapus Jenis Fasilitas" data-text="Apakah Anda yakin ingin menghapus jenis fasilitas ini?">
                                                 @csrf @method('DELETE')
@@ -369,10 +369,6 @@
 
 @endif
 
-@push('scripts')
-<script>
-    window._allPetugas = @json($listPetugas->map(fn($p) => ['id' => $p->id, 'name' => $p->name]));
-</script>
-@endpush
+<div id="facilities-data" class="d-none" data-petugas='@json($listPetugas->map(fn($p) => ["id" => $p->id, "name" => $p->name]))'></div>
 
 @endsection

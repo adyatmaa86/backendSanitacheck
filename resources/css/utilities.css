@@ -643,3 +643,90 @@
 [data-theme="dark"] .bg-adm-surface {
     background: var(--adm-surface) !important;
 }
+
+[data-theme="dark"] .bg-blue-50  { background: #1e3a5f !important; }
+[data-theme="dark"] .bg-green-50 { background: #14532d !important; }
+[data-theme="dark"] .bg-yellow-50 { background: #713f12 !important; }
+[data-theme="dark"] .bg-red-50   { background: #7f1d1d !important; }
+
+[data-theme="dark"] .bg-blue-100  { background: #1e40af !important; }
+[data-theme="dark"] .bg-green-100 { background: #166534 !important; }
+[data-theme="dark"] .bg-yellow-100 { background: #854d0e !important; }
+[data-theme="dark"] .bg-red-100   { background: #991b1b !important; }
+
+[data-theme="dark"] .text-dark-amber { color: #fef3c7 !important; }
+[data-theme="dark"] .text-dark-green { color: #d1fae5 !important; }
+[data-theme="dark"] .bg-green-200 { background: #166534 !important; }
+[data-theme="dark"] .bg-amber-soft { background: #713f12 !important; }
+[data-theme="dark"] .bg-green-soft { background: #14532d !important; }
+
+/* --- Sidebar count badge --- */
+.sidebar-count-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    font-size: 0.6rem;
+    font-weight: 700;
+    padding: 0 5px;
+    border-radius: 9px;
+    line-height: 1;
+}
+
+[data-theme="dark"] .stat-icon .material-symbols-outlined {
+    font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 20;
+}
+
+/* =============================================
+   Login decorative blobs
+   ============================================= */
+.login-blob-primary { width:320px;height:320px;top:-100px;right:-100px;filter:blur(80px);border-radius:50%;position:absolute;background:var(--bs-primary);opacity:.1;pointer-events:none;z-index:1; }
+.login-blob-primary-sm { width:180px;height:180px;top:-60px;right:-60px;filter:blur(60px);border-radius:50%;position:absolute;background:var(--bs-primary);opacity:.1;pointer-events:none;z-index:1; }
+.login-blob-success { width:260px;height:260px;bottom:-80px;left:-80px;filter:blur(80px);border-radius:50%;position:absolute;background:var(--bs-success);opacity:.1;pointer-events:none;z-index:1; }
+.login-blob-success-sm { width:160px;height:160px;bottom:-50px;left:-50px;filter:blur(60px);border-radius:50%;position:absolute;background:var(--bs-success);opacity:.1;pointer-events:none;z-index:1; }
+
+/* =============================================
+   Indicator dots for history table
+   ============================================= */
+.indicator-dot-success { background:#22c55e; }
+.indicator-dot-danger  { background:#ef4444; }
+
+/* =============================================
+   Dashboard SVG donut
+   ============================================= */
+.donut-svg { transform:rotate(-90deg);width:100%;height:100%; }
+
+/* =============================================
+   Swal modal form elements (dark-mode aware)
+   ============================================= */
+:root {
+    --swal-el-bg: #fff;
+    --swal-el-color: #0f172a;
+    --swal-el-border: #e2e8f0;
+}
+[data-theme="dark"] {
+    --swal-el-bg: #0f172a;
+    --swal-el-color: #e2e8f0;
+    --swal-el-border: #334155;
+}
+.swal-form-label {
+    display:block;margin-bottom:.25rem;font-size:.8rem;font-weight:600;
+    color:var(--swal-el-color);
+}
+.swal-form-select, .swal-form-textarea, .swal-form-input {
+    display:block;width:100%;padding:.375rem .75rem;font-size:.875rem;
+    border:1px solid var(--swal-el-border);border-radius:6px;
+    background:var(--swal-el-bg);color:var(--swal-el-color);
+    transition:border-color .15s;
+}
+
+/* =============================================
+   Swal image max-height
+   ============================================= */
+.swal-img-maxh { max-height:400px; }
+
+/* =============================================
+   Inline edit jenis toggles
+   ============================================= */
+.inline-edit-btn { font-size:.75rem;padding:0 .5rem;line-height:1.75; }

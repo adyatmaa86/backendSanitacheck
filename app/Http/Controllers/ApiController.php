@@ -4,7 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Fasilitas;
 use App\Models\Inspeksi;
+use App\Models\Laporan;
+use App\Models\User;
+use App\Notifications\NewLaporanNotification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
 
@@ -140,6 +144,7 @@ class ApiController extends Controller
             'bau_tidak_sedap' => 'required|in:ya,tidak',
             'catatan' => 'nullable|string|max:1000',
             'status_tindak_lanjut' => 'required|in:aman,perlu dibersihkan,perlu perbaikan',
+            'foto_after' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
         if ($validator->fails()) {
@@ -210,6 +215,51 @@ class ApiController extends Controller
             'status' => 'success',
             'message' => 'Inspection report created successfully',
             'data' => $inspection
+        ], 201);
+    }
+
+    /**
+     * POST /api/laporan
+     * Public endpoint untuk masyarakat melaporkan sanitasi
+     */
+    public function storeLaporan(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'nama_pelapor' => 'required|string|max:100',
+            'no_telp' => 'required|string|max:20',
+            'fasilitas_id' => 'required|exists:fasilitas,id',
+            'keluhan' => 'required|string|max:2000',
+            'foto_bukti' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $fotoPath = null;
+        if ($request->hasFile('foto_bukti')) {
+            $fotoPath = $request->file('foto_bukti')->store('laporan', 'public');
+        }
+
+        $laporan = Laporan::create([
+            'nama_pelapor' => $request->nama_pelapor,
+            'no_telp' => $request->no_telp,
+            'fasilitas_id' => $request->fasilitas_id,
+            'keluhan' => $request->keluhan,
+            'foto_bukti' => $fotoPath,
+            'status' => 'pending',
+        ]);
+
+        // Notify all admins
+        $admins = User::where('role', 'admin')->get();
+        Notification::send($admins, new NewLaporanNotification($laporan));
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Laporan berhasil dikirim. Terima kasih!',
         ], 201);
     }
 
